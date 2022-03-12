@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string("type")->nullable();
             $table->dateTime("start")->nullable();
             $table->dateTime("stop")->nullable();
+            $table->integer("minutes")->nullable();
             $table->bigInteger("workday_id")->unsigned()->nullable();
             $table->timestamps();
             $table->softDeletes();

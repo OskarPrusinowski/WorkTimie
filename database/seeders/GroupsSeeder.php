@@ -18,7 +18,7 @@ class GroupsSeeder extends Seeder
     {
         $data = [];
         foreach ($this->groups as $group) {
-            $data[] = ['name' => $group[0], 'work_time' => $group[1]];
+            $data[] = ['name' => $group[0], 'worktime' => $group[1]];
         }
         DB::table('groups')->insert($data);
     }

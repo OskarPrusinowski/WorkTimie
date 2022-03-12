@@ -13,8 +13,8 @@ class WorkdaysService
         $this->workdayModel = $workdayModel;
     }
 
-    public function list($userId)
+    public function list($userId, $date)
     {
-        return $this->workdayModel->filtrByUser($userId)->get();
+        return $this->workdayModel->filtrByUser($userId)->month($date)->get();
     }
 }

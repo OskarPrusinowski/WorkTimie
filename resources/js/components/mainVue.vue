@@ -2,8 +2,8 @@
   <v-app>
     <v-card class="pa-8">
       <div class="home" style="display: inline-block">
-        <router-link to="/">
-          <v-btn icon> <v-icon>home</v-icon></v-btn>
+        <router-link tag="v-btn" to="/home">
+          <v-btn icon> <v-icon>mdi-home</v-icon></v-btn>
         </router-link>
         <div class="calendar" style="display: inline-block">
           <router-link to="/monthCalendar">
@@ -17,6 +17,9 @@
             <v-btn depressed color="primary"> Użytkownicy </v-btn>
           </router-link>
         </div>
+        <div style="display: inline-block">
+          <v-btn depressed color="primary" @click="logout()"> Wyloguj </v-btn>
+        </div>
       </div>
       <v-divider></v-divider>
       <router-view></router-view>
@@ -28,11 +31,18 @@ import store from "../store/index";
 export default {
   computed: {},
   data() {
-    return {
-      message: "Hello World",
-    };
+    return {};
   },
-  created() {
+  methods: {
+    logout() {
+      this.$http.post("http://127.0.0.1:8000/logout").then((response) => {
+        console.log(response);
+      });
+      store.dispatch("getActualUser", this);
+      window.location.reload();
+    },
+  },
+  beforeCreate() {
     store.dispatch("getActualUser", this);
   },
 };

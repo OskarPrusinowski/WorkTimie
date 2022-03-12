@@ -35,7 +35,7 @@ const mutations = {
 const actions = {
     startWorkPeriod(state, VueComponent) {
         const workday_id = state.getters.getWorkPeriodWorkdayId;
-        VueComponent.$http.post(urlWorkPeriods + "start/" + workday_id, { type: getWorkPeriodType })
+        VueComponent.$http.post(urlWorkPeriods + "start/" + workday_id, { type: state.getters.getWorkPeriodType })
             .then(response => {
                 console.log(response);
                 state.commit("setWorkPeriod", response.data.workPeriod);
@@ -43,7 +43,7 @@ const actions = {
     },
     stopWorkPeriod(state, VueComponent) {
         const id = state.getters.getWorkPeriodId;
-        VueComponent.$http.post(urlWorkPeriods + "stop/" + id, { workPeriod: state.getters.getWorkPeriod })
+        VueComponent.$http.put(urlWorkPeriods + "stop/" + id, { workPeriod: state.getters.getWorkPeriod })
             .then(response => {
                 console.log(response);
             })

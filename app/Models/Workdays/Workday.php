@@ -2,7 +2,7 @@
 
 namespace App\Models\Workdays;
 
-use App\Models\Periods\WorkPeriod;
+use App\Models\WorkPeriods\WorkPeriod;
 use App\Models\Users\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -13,7 +13,7 @@ class Workday extends Model
 {
     use HasFactory, softDeletes;
 
-    protected $fillable = ['holiday', 'day', 'date', 'start', 'stop', 'break_time', 'overtime', 'user_id'];
+    protected $fillable = ['holiday', 'day', 'date', 'start', 'stop', 'breaktime', 'worktime', 'overtime', 'user_id'];
 
     public function user()
     {
@@ -33,5 +33,12 @@ class Workday extends Model
     public function scopeToday($query)
     {
         return $query->where('start', '>', Carbon::now()->addHour()->startOfDay());
+    }
+
+    public function scopeMonth($query, $month)
+    {
+        $start = (new Carbon($month))->startOfMonth();
+        $stop = (new Carbon($month))->endOfMonth();
+        return $query->whereBetween('date', [$start, $stop]);
     }
 }

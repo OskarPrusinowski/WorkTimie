@@ -38,7 +38,7 @@ class WorkdayService
 
     public function getWorkday($id)
     {
-        return $this->workdayModel->find($id);
+        return $this->workdayModel->with("workPeriods")->find($id);
     }
 
     public function updateWorkday($newWorkday, $workdayId)
@@ -50,11 +50,18 @@ class WorkdayService
     public function stop($workday, $workdayId)
     {
         $workday['stop'] = Carbon::now()->addHour();
+        $workPeriods = $this->getWorkday($workdayId)->workPeriods;
+        $break = 0;
+        foreach ($workPeriods as $workPeriod) {
+            $break += $workPeriod->minutes;
+        }
+        $workday['breaktime'] = $break;
+        $workday['worktime'] = Carbon::create($workday['start'])->diffInMinutes($workday['stop']) - $break;
         $this->updateWorkday($workday, $workdayId);
     }
 
     public function getByUser($userId)
     {
-        return $this->workdayModel->filtrByUser($userId)->today()->limit(1)->get();
+        return $this->workdayModel->with("workPeriods")->filtrByUser($userId)->today()->limit(1)->get();
     }
 }

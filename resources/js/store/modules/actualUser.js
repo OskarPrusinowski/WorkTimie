@@ -32,9 +32,10 @@ const actions = {
     async getActualUser(state, VueComponent) {
         await VueComponent.$http.get(urlAuthUser)
             .then(response => {
+                console.log(response.data);
                 state.commit("setActualUser", response.data)
             })
-    }
+    },
 }
 
 export default {

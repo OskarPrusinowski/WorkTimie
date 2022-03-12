@@ -11,19 +11,33 @@ const state = {
         overtime: 0,
         overtime: 0,
         user_id: 0
-    }
-
+    },
+    workdays: [],
+    user_id: 0,
+    date: 0
 };
 
 const getters = {
     getWorkday: state => state.workday,
+    getWorkdays: state => state.workdays,
+    getWorkdaysDate: state => state.date,
     getWorkdayId: state => state.workday.id,
     getWorkdayUserId: state => state.workday.user_id,
+    getWorkdaysUserId: state => state.user_id,
 }
 
 const mutations = {
     setWorkday(state, data) {
         state.workday = data;
+    },
+    setWorkdays(state, data) {
+        state.workdays = data;
+    },
+    setWorkdaysDate(state, data) {
+        state.date = data;
+    },
+    setWorkdaysUserId(state, data) {
+        state.user_id = data;
     },
     setWorkdayId(state, data) {
         state.workday.id = data;
@@ -42,20 +56,26 @@ const actions = {
             })
     },
     stopWorkday(state, VueComponent) {
-        const userId = state.getters.getWorkdayUserId;
-        console.log(state.getters.getWorkday);
-        console.log(state.getters.getWorkday.user_id);
-        VueComponent.$http.put(urlWorkday + "stop/" + userId, { workday: state.getters.getWorkday })
+        const id = state.getters.getWorkdayId;
+        VueComponent.$http.put(urlWorkday + "stop/" + id, { workday: state.getters.getWorkday })
             .then(response => {
                 console.log(response);
             })
     },
-    async getActualWorkday(state, VueComponent) {
+    async getWorkday(state, VueComponent) {
         const userId = state.getters.getWorkdayUserId;
         await VueComponent.$http.get(urlWorkday + "getByUser/" + userId)
             .then(response => {
                 console.log(response.data);
                 state.commit("setWorkday", response.data.workday[0]);
+            })
+    },
+    async getWorkdays(state, VueComponent) {
+        const userId = state.getters.getWorkdaysUserId;
+        const date = state.getters.getWorkdaysDate;
+        await VueComponent.$http.get(urlWorkday + "list/" + userId + "?date=" + date)
+            .then(response => {
+                state.commit("setWorkdays", response.data.workdays);
             })
     }
 }

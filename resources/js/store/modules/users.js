@@ -24,6 +24,7 @@ const getters = {
     getUserEmail: state => state.user.email,
     getUserDateStartEmployed: state => state.user.date_start_employment,
     getUserDateStopEmployed: state => state.user.date_stop_employment,
+    getActualUserGroupId: state => state.user.group_id,
     getUserPassword: state => state.user.password,
     getUserGroupId: state => state.user.group_id,
     getUsers: state => state.users

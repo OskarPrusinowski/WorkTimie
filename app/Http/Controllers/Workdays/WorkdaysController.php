@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Workdays;
 use App\Http\Controllers\Controller;
 use App\Services\Workdays\WorkdaysService;
 use Illuminate\Http\Request;
+use App\Models\Users\User;
 
 class WorkdaysController extends Controller
 {
@@ -15,9 +16,9 @@ class WorkdaysController extends Controller
         $this->workdaysService = $workdaysService;
     }
 
-    public function list($userId)
+    public function list(Request $request, $userId)
     {
-        $workdays = $this->workdaysService->list($userId);
+        $workdays = $this->workdaysService->list($userId, $request->date);
         return response()->json(['workdays' => $workdays]);
     }
 }

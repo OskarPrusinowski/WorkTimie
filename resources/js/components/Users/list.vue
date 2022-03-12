@@ -31,7 +31,9 @@
             >
           </td>
           <td class="text-left">
-            <v-btn @click="deleteUser(user.id)"><v-icon>delete</v-icon></v-btn>
+            <v-btn @click="deleteUser(user.id)"
+              ><v-icon>mdi-trash-can</v-icon></v-btn
+            >
           </td>
         </tr>
       </tbody>

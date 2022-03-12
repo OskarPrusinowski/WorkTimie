@@ -26,7 +26,7 @@ class WorkPeriodService
 
     public function start($type, $workdayId)
     {
-        $weekPeriod = ['type' => $type, 'start' => Carbon::now()->addHour(), 'weekday_id' => $workdayId];
+        $weekPeriod = ['type' => $type, 'start' => Carbon::now()->addHour(), 'workday_id' => $workdayId];
         $this->createWorkPeriod($weekPeriod);
     }
 
@@ -39,6 +39,7 @@ class WorkPeriodService
     public function stop($newWorkPeriod, $workdayId)
     {
         $newWorkPeriod['stop'] = Carbon::now()->addHour();
+        $newWorkPeriod['minutes'] = Carbon::create($newWorkPeriod['start'])->diffInMinutes(Carbon::now()->addHour());
         $this->updateWorkPeriod($newWorkPeriod, $workdayId);
     }
 

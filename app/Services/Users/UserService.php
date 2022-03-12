@@ -17,7 +17,7 @@ class UserService
 
     public function getUser($id)
     {
-        return $this->userModel->find($id);
+        return $this->userModel->with("group")->find($id);
     }
 
     public function createUser($user)

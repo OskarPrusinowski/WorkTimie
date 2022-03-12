@@ -11,7 +11,7 @@ class WorkPeriod extends Model
 {
     use HasFactory, softDeletes;
 
-    protected $fillable = ['type', 'start', 'stop', 'weekday_id'];
+    protected $fillable = ['type', 'start', 'stop', 'minutes', 'workday_id'];
 
     public function workday()
     {
@@ -20,6 +20,6 @@ class WorkPeriod extends Model
 
     public function scopeFiltrByWeekday($query, $workdayId)
     {
-        return $this->query->where('workdayId', $workdayId);
+        return $query->where('workdayId', $workdayId);
     }
 }

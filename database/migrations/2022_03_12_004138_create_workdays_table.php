@@ -20,7 +20,8 @@ return new class extends Migration
             $table->date("date")->nullable();
             $table->dateTime("start")->nullable();
             $table->dateTime("stop")->nullable();
-            $table->integer("break_time")->nullable();
+            $table->integer("breaktime")->nullable();
+            $table->integer("worktime")->nullable();
             $table->integer("overtime")->nullable();
             $table->bigInteger("user_id")->unsigned()->nullable();
             $table->timestamps();
