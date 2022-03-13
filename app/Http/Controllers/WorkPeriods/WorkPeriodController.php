@@ -13,6 +13,7 @@ class WorkPeriodController extends Controller
     public function __construct(WorkPeriodService $workPeriodService)
     {
         $this->workPeriodService = $workPeriodService;
+        $this->middleware("permission:workdaysShow");
     }
 
     public function start(Request $request, $workdayId)

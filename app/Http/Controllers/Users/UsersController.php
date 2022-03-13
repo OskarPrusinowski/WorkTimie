@@ -13,6 +13,7 @@ class UsersController extends Controller
     public function __construct(UsersService $usersService)
     {
         $this->usersService = $usersService;
+        $this->middleware("permission:usersShow");
     }
 
     public function list()

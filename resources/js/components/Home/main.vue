@@ -1,6 +1,5 @@
 <template>
-  <div>
-    {{ breakTime }}
+  <div v-if="permissions.workdaysShow">
     <div>
       <strong>Harmonogram na czas: </strong>
       {{ moment(today).format("MMMM Do YYYY") }}
@@ -25,18 +24,17 @@
             <strong>Zakończenie pracy: </strong>
             {{ moment(workday.stop).format("H:mm:ss") }}
           </div>
-          <div v-else>
+          <div v-else-if="workday.start">
             <div class="mt-3">
               <strong>Czas pracy: </strong>
-              {{
-                moment.utc(moment().diff(moment(workday.start))).format("HH:mm")
-              }}
+              {{ worktime }}
             </div>
             <div>
               <strong>Szacowany czas zakończenia pracy: </strong>
               {{
                 moment(workday.start)
                   .add(group.worktime, "hours")
+                  .add(workday.breaktime, "minutes")
                   .format("H:mm")
               }}
             </div>
@@ -46,22 +44,12 @@
       <v-divider></v-divider>
       <div class="pa-3" v-if="workday.start && !workday.stop">
         <v-btn @click="startPeriod(workday)">
-          <span v-if="isBreak"> Zrób przerwę </span>
+          <span v-if="isBreak" @click="resetBreaktime()"> Zrób przerwę </span>
           <span v-else>Koniec przerwy</span>
         </v-btn>
         <span v-if="!isBreak && workday.work_periods.length > 0">
           Przerwa trwa:
-          {{
-            moment
-              .utc(
-                moment().diff(
-                  moment(
-                    workday.work_periods[workday.work_periods.length - 1].start
-                  )
-                )
-              )
-              .format("HH:mm:ss")
-          }}
+          {{ breaktime }}
         </span>
         <work-periods :workPeriods="workday.work_periods" />
       </div>
@@ -82,7 +70,8 @@ export default {
     return {
       today: new Date(Date.now()),
       moment: moment,
-      breakTime: 0,
+      breaktime: 0,
+      worktime: 0,
     };
   },
   computed: {
@@ -94,6 +83,9 @@ export default {
     },
     group() {
       return store.getters.getGroup;
+    },
+    permissions() {
+      return store.getters.getUserPermissions;
     },
   },
   methods: {
@@ -108,8 +100,8 @@ export default {
       this.stopPeriod(workPeriods[workPeriods.length - 1]);
       this.getActualWorkday();
     },
-    getActualWorkday() {
-      store.dispatch("getWorkday", this);
+    async getActualWorkday() {
+      await store.dispatch("getWorkday", this);
     },
     startPeriod(workday) {
       const workPeriods = workday.work_periods;
@@ -127,12 +119,46 @@ export default {
       store.dispatch("startWorkPeriod", this);
       this.getActualWorkday();
     },
-    stopPeriod(id) {
-      store.commit("setWorkPeriod", id);
+    stopPeriod(workPeriod) {
+      if (workPeriod.type == "Break") {
+        if (!store.getters.getWorkdayBreaktime) {
+          store.commit("setWorkdayBreaktime", 0);
+        }
+        store.commit(
+          "setWorkdayBreaktime",
+          store.getters.getWorkdayBreaktime +
+            parseInt(
+              moment.utc(moment().diff(moment(workPeriod.start))).format("mm")
+            )
+        );
+        store.dispatch("updateWorkday", this);
+      }
+      store.commit("setWorkPeriod", workPeriod);
       store.dispatch("stopWorkPeriod", this);
     },
     getGroup() {
       store.dispatch("getGroup", this);
+    },
+    resetBreaktime() {
+      this.breaktime = moment
+        .utc(
+          moment().diff(
+            moment(
+              this.workday.work_periods[this.workday.work_periods.length - 1]
+                .start
+            )
+          )
+        )
+        .format("HH:mm:ss");
+    },
+    resetWorktime() {
+      this.worktime = moment
+        .utc(moment().diff(moment(this.workday.start)))
+        .format("HH:mm:ss");
+    },
+    resetTime() {
+      this.resetBreaktime();
+      this.resetWorktime();
     },
   },
   async created() {
@@ -141,8 +167,16 @@ export default {
     store.commit("setWorkdayUserId", store.getters.getActualUserId);
     store.commit("setGroup", {});
     store.commit("setGroupId", store.getters.getActualUserGroupId);
-    this.getGroup();
-    this.getActualWorkday();
+    await this.getGroup();
+    await this.getActualWorkday();
+    this.resetTime();
+  },
+  mounted: function () {
+    this.$nextTick(function () {
+      window.setInterval(() => {
+        this.resetTime();
+      }, 10000);
+    });
   },
 };
 </script>

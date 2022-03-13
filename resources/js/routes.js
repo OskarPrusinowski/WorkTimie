@@ -1,6 +1,7 @@
 import UserList from './components/Users/list'
 import MonthCalendar from "./components/MonthCalendar/main"
 import Home from "./components/Home/main"
+import HolidaysList from "./components/Holidays/list"
 
 export default {
     mode: 'history',
@@ -12,6 +13,10 @@ export default {
         {
             path: '/monthCalendar',
             component: MonthCalendar
+        },
+        {
+            path: '/holidays/list',
+            component: HolidaysList
         },
         {
             path: '/*',

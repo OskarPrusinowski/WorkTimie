@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="permissions.workdaysShow">
     <v-col class="ma-0 pb-0 pt-2" md="3">
       <v-row justify="center">
         <v-date-picker
@@ -73,6 +73,9 @@ export default {
         return this.actualUser.date_stop_employment;
       }
       return new Date(Date.now());
+    },
+    permissions() {
+      return store.getters.getUserPermissions;
     },
   },
   methods: {

@@ -32,7 +32,7 @@ class WorkdayService
 
     public function start($userId)
     {
-        $data = ['day' => $this->weekMap[Carbon::now()->dayOfWeek], 'date' => Carbon::now()->addHour(), 'start' => Carbon::now()->addHour(), 'user_id' => $userId];
+        $data = ['day' => $this->weekMap[Carbon::now()->addHour()->dayOfWeek], 'date' => Carbon::now()->addHour(), 'start' => Carbon::now()->addHour(), 'user_id' => $userId];
         $this->createWorkday($data);
     }
 

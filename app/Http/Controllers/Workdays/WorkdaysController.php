@@ -14,6 +14,7 @@ class WorkdaysController extends Controller
     public function __construct(WorkdaysService $workdaysService)
     {
         $this->workdaysService = $workdaysService;
+        $this->middleware("permission:workdaysShow");
     }
 
     public function list(Request $request, $userId)

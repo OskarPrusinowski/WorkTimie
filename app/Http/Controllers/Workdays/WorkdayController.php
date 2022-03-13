@@ -13,6 +13,8 @@ class WorkdayController extends Controller
     public function __construct(WorkdayService $workdayService)
     {
         $this->workdayService = $workdayService;
+        $this->middleware("permission:workdaysShow");
+        $this->middleware("permission:workdaysManage");
     }
 
     public function start($userId)
@@ -23,6 +25,11 @@ class WorkdayController extends Controller
     public function stop(Request $request, $workdayId)
     {
         $this->workdayService->stop($request->get("workday"), $workdayId);
+    }
+
+    public function update(Request $request, $workdayId)
+    {
+        $this->workdayService->updateWorkday($request->get("workday"), $workdayId);
     }
 
     public function getByUser($userId)

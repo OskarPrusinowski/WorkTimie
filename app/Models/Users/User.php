@@ -3,6 +3,7 @@
 namespace App\Models\Users;
 
 use App\Models\Groups\Group;
+use App\Models\Role;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -27,6 +28,7 @@ class User extends Authenticatable
         'date_start_employment',
         'date_stop_employment',
         'group_id',
+        'role_id'
     ];
 
     /**
@@ -51,5 +53,10 @@ class User extends Authenticatable
     public function group()
     {
         return $this->belongsTo(Group::class);
+    }
+
+    public function role()
+    {
+        return $this->belongsTo(Role::class);
     }
 }

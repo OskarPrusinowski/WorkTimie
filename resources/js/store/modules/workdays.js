@@ -7,8 +7,8 @@ const state = {
         day: 0,
         start: 0,
         stop: 0,
-        break_time: 0,
-        overtime: 0,
+        breaktime: 0,
+        worktime: 0,
         overtime: 0,
         user_id: 0
     },
@@ -24,6 +24,7 @@ const getters = {
     getWorkdayId: state => state.workday.id,
     getWorkdayUserId: state => state.workday.user_id,
     getWorkdaysUserId: state => state.user_id,
+    getWorkdayBreaktime: state => state.workday.breaktime,
 }
 
 const mutations = {
@@ -44,6 +45,9 @@ const mutations = {
     },
     setWorkdayUserId(state, data) {
         state.workday.user_id = data;
+    },
+    setWorkdayBreaktime(state, data) {
+        state.workday.breaktime = data;
     }
 }
 
@@ -76,6 +80,13 @@ const actions = {
         await VueComponent.$http.get(urlWorkday + "list/" + userId + "?date=" + date)
             .then(response => {
                 state.commit("setWorkdays", response.data.workdays);
+            })
+    },
+    updateWorkday(state, VueComponent) {
+        const id = state.getters.getWorkdayId;
+        VueComponent.$http.put(urlWorkday + "update/" + id, { workday: state.getters.getWorkday })
+            .then(response => {
+                console.log(response);
             })
     }
 }

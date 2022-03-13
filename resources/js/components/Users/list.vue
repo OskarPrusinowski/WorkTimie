@@ -1,7 +1,7 @@
 <template>
-  <div>
-    <create @added="addedUser" />
-    <v-simple-table>
+  <div v-if="permissions.usersShow">
+    <create @added="addedUser" v-if="permissions.usersManage" />
+    <v-simple-table v-if="permissions.usersShow">
       <thead>
         <tr>
           <th class="text-left">Id</th>
@@ -26,12 +26,15 @@
           </td>
           <td class="text-left" v-else></td>
           <td class="text-left">
-            <v-btn @click="fireUser(user)" :disabled="user.date_stop_employment"
+            <v-btn
+              v-if="permissions.usersManage"
+              @click="fireUser(user)"
+              :disabled="user.date_stop_employment"
               >Zwolnij</v-btn
             >
           </td>
           <td class="text-left">
-            <v-btn @click="deleteUser(user.id)"
+            <v-btn v-if="permissions.usersManage" @click="deleteUser(user.id)"
               ><v-icon>mdi-trash-can</v-icon></v-btn
             >
           </td>
@@ -50,6 +53,9 @@ export default {
   computed: {
     users() {
       return store.getters.getUsers;
+    },
+    permissions() {
+      return store.getters.getUserPermissions;
     },
   },
   methods: {
