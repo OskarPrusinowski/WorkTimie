@@ -1,5 +1,6 @@
 <template>
   <div v-if="permissions.holidaysShow">
+    {{ freeSaturdays }}
     <v-col class="ma-0 pb-0 pt-2" md="3">
       <v-row justify="center">
         <v-date-picker
@@ -11,6 +12,18 @@
         ></v-date-picker>
       </v-row>
     </v-col>
+    <v-divider></v-divider>
+    <v-col class="ma-0 pb-0 pt-2" md="3">
+      <v-row justify="center">
+        <strong> {{ picker.substr(0, 4) }} </strong>
+        <v-switch
+          v-model="switch1"
+          :label="'Wolne w sobotę'"
+          @change="changeFreeSatudays()"
+        ></v-switch>
+      </v-row>
+    </v-col>
+    <v-divider></v-divider>
     <create v-if="permissions.holidaysManage" @added="addedHoliday" />
     <v-simple-table>
       <thead>
@@ -49,6 +62,7 @@ export default {
       picker: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
         .toISOString()
         .substr(0, 7),
+      switch1: false,
     };
   },
   components: {
@@ -63,6 +77,9 @@ export default {
     },
     holidaysDate() {
       return store.getters.getHolidaysDate;
+    },
+    freeSaturdays() {
+      return store.getters.getHolidaysFreeSaturdays;
     },
   },
   methods: {
@@ -81,9 +98,19 @@ export default {
       store.commit("setHolidaysDate", this.picker);
       this.getHolidays();
     },
+    changeFreeSatudays() {
+      store.commit("setHolidaysDate", this.picker.substr(0, 4));
+      store.commit("setHolidaysFreeSaturdayFree", this.switch1);
+      store.dispatch("setHolidaysFreeSaturdayFree", this);
+    },
+    getFreeSaturdays() {
+      store.dispatch("getHolidaysFreeSaturdays", this);
+    },
   },
   created() {
     this.changeMonth();
+    this.getFreeSaturdays();
+    this.switch1 = store.getters.getHolidaysFreeSaturdays;
   },
 };
 </script>

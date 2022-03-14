@@ -8,7 +8,10 @@ const state = {
         day: "",
         date: ""
     },
-    date: ""
+    date: "",
+    freeSaturdays: [],
+    freeSaturdayId: 0,
+    freeSaturdayFree: 0
 };
 
 const getters = {
@@ -19,6 +22,9 @@ const getters = {
     getHolidayDay: state => state.holiday.day,
     getHolidayDate: state => state.holiday.date,
     getHolidaysDate: state => state.date,
+    getHolidaysFreeSaturdays: state => state.freeSaturdays,
+    getHolidaysFreeSaturdayId: state => state.freeSaturdayId,
+    getHolidaysFreeSaturdayFree: state => state.freeSaturdayFree
 };
 
 const mutations = {
@@ -42,6 +48,16 @@ const mutations = {
     },
     setHolidaysDate(state, data) {
         state.date = data;
+    },
+    setHolidaysFreeSaturdays(state, data) {
+        state.freeSaturdays = data;
+    },
+
+    setHolidaysFreeSaturdayId(state, data) {
+        state.freeSaturdayId = data;
+    },
+    setHolidaysFreeSaturdayFree(state, data) {
+        state.freeSaturdayFree = data;
     }
 };
 
@@ -71,6 +87,21 @@ const actions = {
         state.commit("setHolidayName", "");
         state.commit("setHolidayDay", "");
         state.commit("setHolidayDate", "");
+    },
+    setHolidaysFreeSaturdays(state, VueComponent) {
+        const date = state.getters.getHolidaysDate;
+        const freeSaturday = state.getters.getHolidaysFreeSaturdayFree;
+        VueComponent.$http.post(urlHolidays + "freeSaturdays?date=" + date + "&freeSaturday=" + freeSaturday)
+            .then(response => {
+                console.log(response);
+            })
+    },
+    getHolidaysFreeSaturdays(state, VueComponent) {
+        VueComponent.$http.get(urlHolidays + "freeSaturdays/list")
+            .then(response => {
+                console.log(response);
+                state.commit("setHolidaysFreeSaturdays", response.data.freeSaturdays)
+            })
     }
 };
 

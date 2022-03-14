@@ -19,4 +19,16 @@ class Holiday extends Model
         $stop = (new Carbon($month))->endOfMonth();
         return $query->whereBetween('date', [$start, $stop]);
     }
+
+    public function scopeYear($query, $year)
+    {
+        $start = (new Carbon($year))->startOfYear();
+        $stop = (new Carbon($year))->endOfYear();
+        return $query->whereBetween('date', [$start, $stop]);
+    }
+
+    public function scopeAscDate($query)
+    {
+        return $query->orderBy("date", "asc");
+    }
 }

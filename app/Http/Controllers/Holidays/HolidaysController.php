@@ -21,4 +21,9 @@ class HolidaysController extends Controller
         $holidays = $this->holidaysService->list($request->date);
         return response()->json(['holidays' => $holidays]);
     }
+
+    public function freeSaturday(Request $request)
+    {
+        $this->holidaysService->freeSaturdays($request->date, $request->freeSaturday);
+    }
 }
