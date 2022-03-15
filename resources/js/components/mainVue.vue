@@ -30,6 +30,15 @@
           </router-link>
         </div>
         <div
+          class="applications"
+          style="display: inline-block"
+          v-if="permissions.holidaysShow"
+        >
+          <router-link to="/applications/list">
+            <v-btn depressed color="primary"> Akceptacja </v-btn>
+          </router-link>
+        </div>
+        <div
           class="holidays"
           style="display: inline-block"
           v-if="permissions.holidaysShow"
@@ -42,6 +51,7 @@
           <v-btn depressed color="primary" @click="logout()"> Wyloguj </v-btn>
         </div>
       </div>
+
       <v-divider></v-divider>
       <router-view></router-view>
     </v-card>
@@ -53,6 +63,9 @@ export default {
   computed: {
     permissions() {
       return store.getters.getUserPermissions;
+    },
+    actualUser() {
+      return store.getters.getActualUser;
     },
   },
   data() {

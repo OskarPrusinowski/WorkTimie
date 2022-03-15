@@ -1,6 +1,6 @@
 <template>
   <div v-if="permissions.workdaysShow">
-    <v-col class="ma-0 pb-0 pt-2" md="3">
+    <v-col class="ma-0 pb-0 pt-2" md="3" justify="center">
       <v-row justify="center">
         <v-date-picker
           v-model="picker"
@@ -11,6 +11,7 @@
         ></v-date-picker>
       </v-row>
     </v-col>
+    <v-divider></v-divider>
     <v-simple-table id="table">
       <thead>
         <tr>
@@ -28,19 +29,33 @@
           <td class="text-left">{{ index + 1 }}</td>
           <td class="text-left">{{ workday.day }}</td>
           <td class="text-left">
-            {{ moment(workday.start).format("h:mm:ss") }}
+            {{ moment(workday.start).format("h:mm") }}
           </td>
-          <td class="text-left">{{ workday.worktime }}</td>
-          <td class="text-left">
-            {{ moment(workday.stop).format("h:mm:ss") }}
+          <td class="text-left" v-if="workday.worktime">
+            {{ workday.worktime }} (minut)
           </td>
+          <td class="text-left" v-else>
+            {{
+              moment
+                .utc(
+                  moment().diff(
+                    moment(workday.start).add(workday.breaktime, "minutes")
+                  )
+                )
+                .format("HH:mm:ss")
+            }}
+          </td>
+          <td class="text-left" v-if="workday.stop">
+            {{ moment(workday.stop).format("h:mm") }}
+          </td>
+          <td class="text-left" v-else></td>
           <td class="text-left">{{ workday.breaktime }}</td>
           <td class="text-left">!!NADGODZINY!!</td>
         </tr>
       </tbody>
     </v-simple-table>
-    {{ workdays }}
-    <div>
+    <v-divider></v-divider>
+    <div style="text-align: center">
       <v-btn depressed color="blue lighten-2" dark @click="downloadPDF()"
         >Pobierz tabelkę</v-btn
       >

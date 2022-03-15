@@ -1,13 +1,12 @@
 <template>
   <div v-if="permissions.holidaysShow">
-    {{ freeSaturdays }}
     <v-col class="ma-0 pb-0 pt-2" md="3">
       <v-row justify="center">
         <v-date-picker
           v-model="picker"
           type="month"
           min="2010-01-01"
-          max="2025-01-01"
+          max="2030-12-30"
           @change="changeMonth()"
         ></v-date-picker>
       </v-row>
@@ -17,9 +16,16 @@
       <v-row justify="center">
         <strong> {{ picker.substr(0, 4) }} </strong>
         <v-switch
-          v-model="switch1"
+          v-model="
+            freeSaturdays[parseInt(picker.substr(0, 4)) - firstFreeSaturdays]
+              .free
+          "
           :label="'Wolne w sobotę'"
-          @change="changeFreeSatudays()"
+          @change="
+            changeFreeSatudays(
+              freeSaturdays[parseInt(picker.substr(0, 4)) - firstFreeSaturdays]
+            )
+          "
         ></v-switch>
       </v-row>
     </v-col>
@@ -28,6 +34,7 @@
     <v-simple-table>
       <thead>
         <tr>
+          <th class="text-left">Lp</th>
           <th class="text-left">Nazwa</th>
           <th class="text-left">Dzień tygodnia</th>
           <th class="text-left">Data</th>
@@ -35,7 +42,8 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="holiday in holidays" :key="holiday.id">
+        <tr v-for="(holiday, index) in holidays" :key="holiday.id">
+          <td class="text-left">{{ index + 1 }}</td>
           <td class="text-left">{{ holiday.name }}</td>
           <td class="text-left">{{ holiday.day }}</td>
           <td class="text-left">{{ holiday.date }}</td>
@@ -81,6 +89,9 @@ export default {
     freeSaturdays() {
       return store.getters.getHolidaysFreeSaturdays;
     },
+    firstFreeSaturdays() {
+      return store.getters.getHolidaysFistFreeSaturday;
+    },
   },
   methods: {
     getHolidays() {
@@ -98,10 +109,13 @@ export default {
       store.commit("setHolidaysDate", this.picker);
       this.getHolidays();
     },
-    changeFreeSatudays() {
+    async changeFreeSatudays(FreeSaturday) {
       store.commit("setHolidaysDate", this.picker.substr(0, 4));
-      store.commit("setHolidaysFreeSaturdayFree", this.switch1);
-      store.dispatch("setHolidaysFreeSaturdayFree", this);
+      store.commit("setHolidaysFreeSaturdayFree", FreeSaturday.free);
+      store.dispatch("setHolidaysFreeSaturdays", this);
+      store.commit("setHolidaysFreeSaturdayId", FreeSaturday.id);
+      await store.dispatch("changeHolidaysFreeSaturdays", this);
+      this.getHolidays();
     },
     getFreeSaturdays() {
       store.dispatch("getHolidaysFreeSaturdays", this);

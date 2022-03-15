@@ -1,103 +1,107 @@
 <template>
-  <div class="text-center">
-    <v-dialog v-model="dialog" width="500">
-      <template v-slot:activator="{ on, attrs }">
-        <v-btn
-          color="red lighten-2"
-          dark
-          v-bind="attrs"
-          v-on="on"
-          @click="open()"
-        >
-          Stwórz użytkownika
-        </v-btn>
-      </template>
-
-      <v-card>
-        <v-card-title class="text-h5 grey lighten-2">
-          Stwórz użytkownika
-        </v-card-title>
-        <v-divider></v-divider>
-
-        <v-col class="ma-0 pb-0 pt-0" md="10">
-          <v-text-field
-            label="Imie"
-            outlined
-            v-model="user.name"
-            :rules="[rules.required, rules.min, rules.max]"
-          ></v-text-field>
-        </v-col>
-        <v-col class="ma-0 pb-0 pt-0" md="10">
-          <v-text-field
-            label="Nazwisko"
-            outlined
-            v-model="user.surname"
-            :rules="[rules.required, rules.min, rules.max]"
-          ></v-text-field>
-        </v-col>
-        <v-col class="ma-0 pb-0 pt-0" md="10">
-          <v-text-field
-            label="Numer telefonu"
-            outlined
-            v-model="user.phone_number"
-            :rules="[rules.required, rules.phoneNumber]"
-          ></v-text-field>
-        </v-col>
-        <v-col md="10">
-          <v-text-field
-            label="Email"
-            outlined
-            v-model="user.email"
-            :rules="[rules.required, rules.email]"
-          ></v-text-field>
-        </v-col>
-        <v-col class="ma-0 pb-0 pt-0" md="10">
-          <v-text-field
-            label="Hasło"
-            outlined
-            :type="'password'"
-            v-model="user.password"
-            :rules="[rules.required, rules.min, rules.max]"
-          ></v-text-field>
-        </v-col>
-        <v-col class="ma-0 pb-0 pt-2" md="10">
-          <v-row justify="center">
-            <legend
-              class="v-label theme--light"
-              style="left: 0px; right: auto; position: relative"
-            >
-              Rozpoczęcie zatrudnienia
-            </legend>
-            <v-date-picker v-model="user.date_start_employment"></v-date-picker>
-          </v-row>
-        </v-col>
-
-        <v-col class="ma-0 pb-0 pt-0" md="10">
-          <v-select
-            v-if="groups"
-            :items="groups"
-            label="Wybierz grupę"
-            item-text="name"
-            item-value="id"
-            outlined
-            v-model="user.group_id"
-          ></v-select>
-        </v-col>
-
-        <v-divider></v-divider>
-
-        <v-card-actions>
-          <v-btn depressed color="error" @click="dialog = false">
-            Anuluj
-          </v-btn>
-          <v-spacer></v-spacer>
-          <v-btn depressed color="primary" @click="createUser(user)">
+  <v-form ref="form">
+    <div class="text-center">
+      <v-dialog v-model="dialog" width="500">
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn
+            color="red lighten-2"
+            dark
+            v-bind="attrs"
+            v-on="on"
+            @click="open()"
+          >
             Stwórz użytkownika
           </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-  </div>
+        </template>
+
+        <v-card>
+          <v-card-title class="text-h5 grey lighten-2">
+            Stwórz użytkownika
+          </v-card-title>
+          <v-divider></v-divider>
+
+          <v-col class="ma-0 pb-0 pt-0" md="10">
+            <v-text-field
+              label="Imie"
+              outlined
+              v-model="user.name"
+              :rules="[rules.required, rules.min, rules.max]"
+            ></v-text-field>
+          </v-col>
+          <v-col class="ma-0 pb-0 pt-0" md="10">
+            <v-text-field
+              label="Nazwisko"
+              outlined
+              v-model="user.surname"
+              :rules="[rules.required, rules.min, rules.max]"
+            ></v-text-field>
+          </v-col>
+          <v-col class="ma-0 pb-0 pt-0" md="10">
+            <v-text-field
+              label="Numer telefonu"
+              outlined
+              v-model="user.phone_number"
+              :rules="[rules.required, rules.phoneNumber]"
+            ></v-text-field>
+          </v-col>
+          <v-col md="10">
+            <v-text-field
+              label="Email"
+              outlined
+              v-model="user.email"
+              :rules="[rules.required, rules.email]"
+            ></v-text-field>
+          </v-col>
+          <v-col class="ma-0 pb-0 pt-0" md="10">
+            <v-text-field
+              label="Hasło"
+              outlined
+              :type="'password'"
+              v-model="user.password"
+              :rules="[rules.required, rules.min, rules.max]"
+            ></v-text-field>
+          </v-col>
+          <v-col class="ma-0 pb-0 pt-2" md="10">
+            <v-row justify="center">
+              <legend
+                class="v-label theme--light"
+                style="left: 0px; right: auto; position: relative"
+              >
+                Rozpoczęcie zatrudnienia
+              </legend>
+              <v-date-picker
+                v-model="user.date_start_employment"
+              ></v-date-picker>
+            </v-row>
+          </v-col>
+
+          <v-col class="ma-0 pb-0 pt-0" md="10">
+            <v-select
+              v-if="groups"
+              :items="groups"
+              label="Wybierz grupę"
+              item-text="name"
+              item-value="id"
+              outlined
+              v-model="user.group_id"
+            ></v-select>
+          </v-col>
+
+          <v-divider></v-divider>
+
+          <v-card-actions>
+            <v-btn depressed color="error" @click="dialog = false">
+              Anuluj
+            </v-btn>
+            <v-spacer></v-spacer>
+            <v-btn depressed color="primary" @click="createUser(user)">
+              Stwórz użytkownika
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+    </div></v-form
+  >
 </template>
 <script>
 import store from "../../store/index";
@@ -139,6 +143,7 @@ export default {
   },
   methods: {
     createUser(user) {
+      console.log(this.$refs);
       store.commit("setUser", user);
       store.dispatch("createUser", this);
       this.dialog = false;

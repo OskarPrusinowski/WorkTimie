@@ -1,57 +1,65 @@
 <template>
-  <div class="text-center">
-    <v-dialog v-model="dialog" width="500">
-      <template v-slot:activator="{ on, attrs }">
-        <v-btn
-          color="red lighten-2"
-          dark
-          v-bind="attrs"
-          v-on="on"
-          @click="open()"
-        >
-          Dodaj dzień wolny
-        </v-btn>
-      </template>
-
-      <v-card>
-        {{ holiday }}
-        <v-card-title class="text-h5 grey lighten-2">
-          Dodaj dzień wolny
-        </v-card-title>
-        <v-divider></v-divider>
-        <v-card-text>
-          <v-col class="ma-0 pb-0 pt-0" md="10">
-            <v-text-field
-              label="Nazwa"
-              outlined
-              v-model="holiday.name"
-              :rules="[rules.required, rules.min, rules.max]"
-            ></v-text-field>
-          </v-col>
-          <v-col class="ma-0 pb-0 pt-2" md="10">
-            <v-row justify="center">
-              <legend
-                class="v-label theme--light"
-                style="left: 0px; right: auto; position: relative"
-              >
-                Data
-              </legend>
-              <v-date-picker v-model="holiday.date"></v-date-picker>
-            </v-row>
-          </v-col>
-        </v-card-text>
-
-        <v-divider></v-divider>
-
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="primary" text @click="createHoliday()">
-            I accept
+  <v-form ref="form">
+    <div class="text-center">
+      <v-dialog v-model="dialog" width="500">
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn
+            color="red lighten-2"
+            dark
+            v-bind="attrs"
+            v-on="on"
+            @click="open()"
+          >
+            Dodaj dzień wolny
           </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-  </div>
+        </template>
+
+        <v-card>
+          <v-card-title class="text-h5 grey lighten-2">
+            Dodaj dzień wolny
+          </v-card-title>
+          <v-divider></v-divider>
+          <v-card-text>
+            <v-col class="ma-0 pb-0 pt-0" md="10">
+              <v-text-field
+                label="Nazwa"
+                outlined
+                v-model="holiday.name"
+                :rules="[rules.required, rules.min, rules.max]"
+              ></v-text-field>
+            </v-col>
+            <v-col class="ma-0 pb-0 pt-2" md="10">
+              <v-row justify="center">
+                <legend
+                  class="v-label theme--light"
+                  style="left: 0px; right: auto; position: relative"
+                >
+                  Data
+                </legend>
+                <v-date-picker
+                  v-model="holiday.date"
+                  min="2010-01-01"
+                  max="2030-12-30"
+                ></v-date-picker>
+              </v-row>
+            </v-col>
+          </v-card-text>
+
+          <v-divider></v-divider>
+
+          <v-card-actions>
+            <v-btn depressed color="error" @click="dialog = false">
+              Anuluj
+            </v-btn>
+            <v-spacer></v-spacer>
+            <v-btn color="primary" depressed @click="createHoliday()">
+              Dodaj
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+    </div></v-form
+  >
 </template>
 <script>
 import store from "../../store/index";
@@ -96,6 +104,11 @@ export default {
     async open() {
       await store.dispatch("setHolidayInit");
       store.commit("setHolidayDate", this.picker);
+    },
+  },
+  watch: {
+    dialog() {
+      this.$refs.form.reset();
     },
   },
 };

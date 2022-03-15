@@ -25,3 +25,5 @@ const app = new Vue({
         mainVue
     }
 });
+
+export const bus = new Vue()

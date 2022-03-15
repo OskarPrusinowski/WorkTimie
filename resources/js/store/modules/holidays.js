@@ -11,7 +11,8 @@ const state = {
     date: "",
     freeSaturdays: [],
     freeSaturdayId: 0,
-    freeSaturdayFree: 0
+    freeSaturdayFree: 0,
+    fistFreeSaturday: 0
 };
 
 const getters = {
@@ -24,7 +25,8 @@ const getters = {
     getHolidaysDate: state => state.date,
     getHolidaysFreeSaturdays: state => state.freeSaturdays,
     getHolidaysFreeSaturdayId: state => state.freeSaturdayId,
-    getHolidaysFreeSaturdayFree: state => state.freeSaturdayFree
+    getHolidaysFreeSaturdayFree: state => state.freeSaturdayFree,
+    getHolidaysFistFreeSaturday: state => state.fistFreeSaturday
 };
 
 const mutations = {
@@ -58,6 +60,9 @@ const mutations = {
     },
     setHolidaysFreeSaturdayFree(state, data) {
         state.freeSaturdayFree = data;
+    },
+    setHolidaysFistFreeSaturday(state, data) {
+        state.fistFreeSaturday = data;
     }
 };
 
@@ -99,8 +104,15 @@ const actions = {
     getHolidaysFreeSaturdays(state, VueComponent) {
         VueComponent.$http.get(urlHolidays + "freeSaturdays/list")
             .then(response => {
-                console.log(response);
+                state.commit("setHolidaysFistFreeSaturday", response.data.freeSaturdays[0].year)
                 state.commit("setHolidaysFreeSaturdays", response.data.freeSaturdays)
+            })
+    },
+    async changeHolidaysFreeSaturdays(state, VueComponent) {
+        const id = state.getters.getHolidaysFreeSaturdayId;
+        await VueComponent.$http.put(urlHolidays + "freeSaturdays/change/" + id)
+            .then(response => {
+                console.log(response)
             })
     }
 };

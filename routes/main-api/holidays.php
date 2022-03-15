@@ -9,7 +9,7 @@ use App\Http\Controllers\Holidays\FreeSaturdaysController;
 use App\Http\Controllers\Holidays\FreeSaturdayController;
 
 Route::get('/list', [HolidaysController::class, 'list']);
-Route::post('/freeSaturdays', [HolidaysController::class, 'freeSaturdays']);
+Route::post('/freeSaturdays', [HolidaysController::class, 'freeSaturday']);
 
 Route::post('/create', [HolidayController::class, 'create']);
 Route::delete('/delete/{id}', [HolidayController::class, 'destroy']);
@@ -17,4 +17,4 @@ Route::delete('/delete/{id}', [HolidayController::class, 'destroy']);
 
 Route::get('/freeSaturdays/list', [FreeSaturdaysController::class, 'list']);
 
-Route::put('/freeSaturdays/change/{id}', [FreeSaturdaysController::class, 'change']);
+Route::put('/freeSaturdays/change/{id}', [FreeSaturdayController::class, 'change']);

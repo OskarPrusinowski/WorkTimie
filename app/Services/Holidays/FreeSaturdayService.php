@@ -22,8 +22,7 @@ class FreeSaturdayService
     public function changeFreeStaruday($freeSaturdayId)
     {
         $freeSaturday = $this->getFreeSaturday($freeSaturdayId);
-        $newFreeSaturday = $freeSaturday;
-        $newFreeSaturday->free = !$newFreeSaturday->free;
-        $freeSaturday->update($newFreeSaturday);
+        $freeSaturday->free = !$freeSaturday->free;
+        $freeSaturday->save();
     }
 }

@@ -2,7 +2,7 @@
   <div v-if="permissions.workdaysShow">
     <div>
       <strong>Harmonogram na czas: </strong>
-      {{ moment(today).format("MMMM Do YYYY") }}
+      {{ moment(today).format("YYYY-mm-DD") }}
     </div>
     <v-card>
       <div class="pa-3">
@@ -12,7 +12,7 @@
         <span v-else>
           <div class="pb-4">
             <strong>Rozpoczęcie pracy: </strong
-            >{{ moment(workday.start).format("H:mm:ss") }}
+            >{{ moment(workday.start).format("H:mm") }}
           </div>
           <v-btn
             :disabled="workday.stop"
@@ -22,19 +22,44 @@
           >
           <div class="pt-4 pb-3" v-if="workday.stop">
             <strong>Zakończenie pracy: </strong>
-            {{ moment(workday.stop).format("H:mm:ss") }}
+            {{ moment(workday.stop).format("H:mm") }}
           </div>
           <div v-else-if="workday.start">
-            <div class="mt-3">
+            <div class="mt-3 workTime">
               <strong>Czas pracy: </strong>
-              {{ worktime }}
+              {{
+                moment
+                  .utc(
+                    moment(worktime, "HH:mm:ss").diff(
+                      moment(breaktime, "HH:mm:ss").add(
+                        workday.breaktime,
+                        "minutes"
+                      )
+                    )
+                  )
+                  .format("HH:mm:ss")
+              }}
             </div>
-            <div>
+            <div class="additionalHour">
+              <div v-if="additionalMinutes > 0">
+                <strong> Musisz wypracować dodatkowo: </strong>
+                {{ additionalMinutes }} <strong> minut</strong>
+              </div>
+              <div v-else-if="additionalMinutes < 0">
+                <strong> Masz do odebrania: </strong> {{ additionalMinutes }}
+                <strong> minut</strong>
+              </div>
+            </div>
+            <div class="addApplication">
+              <create-application :userId="user.id" />
+            </div>
+            <div class="endOfTheWork">
               <strong>Szacowany czas zakończenia pracy: </strong>
               {{
                 moment(workday.start)
                   .add(group.worktime, "hours")
                   .add(workday.breaktime, "minutes")
+                  .add(additionalMinutes, "minutes")
                   .format("H:mm")
               }}
             </div>
@@ -54,6 +79,7 @@
         <work-periods :workPeriods="workday.work_periods" />
       </div>
     </v-card>
+    <create-additional-hour :show="dialog" />
   </div>
 </template>
 
@@ -61,10 +87,14 @@
 import moment from "moment";
 import store from "../../store/index";
 import workPeriods from "./workPeriods";
+import createAdditionalHour from "./createAdditionalHour";
+import createApplication from "./createApplication";
 
 export default {
   components: {
     workPeriods: workPeriods,
+    createAdditionalHour: createAdditionalHour,
+    createApplication: createApplication,
   },
   data() {
     return {
@@ -72,6 +102,7 @@ export default {
       moment: moment,
       breaktime: 0,
       worktime: 0,
+      dialog: false,
     };
   },
   computed: {
@@ -87,23 +118,41 @@ export default {
     permissions() {
       return store.getters.getUserPermissions;
     },
+    additionalhours() {
+      return store.getters.getAdditionalHours;
+    },
+    additionalMinutes() {
+      var minutes = 0;
+      var additionalHours = this.additionalhours;
+      for (var i = 0; i < this.additionalhours.length; i++) {
+        minutes += additionalHours[i].minutes;
+      }
+      return minutes;
+    },
+    user() {
+      return store.getters.getActualUser;
+    },
   },
   methods: {
     startWork() {
       store.commit("setWorkday", {});
-      store.commit("setWorkdayUserId", store.getters.getActualUserId);
+      store.commit("setWorkdayUserId", this.user.id);
       store.dispatch("startWorkday", this);
       this.getActualWorkday();
     },
-    stopWork(workPeriods) {
+    async stopWork(workPeriods) {
       store.dispatch("stopWorkday", this);
-      this.stopPeriod(workPeriods[workPeriods.length - 1]);
-      this.getActualWorkday();
+      if (workPeriods.length > 0) {
+        this.stopPeriod(workPeriods[workPeriods.length - 1]);
+      } else {
+        await this.getActualWorkday();
+      }
+      this.createAdditionalHour();
     },
     async getActualWorkday() {
       await store.dispatch("getWorkday", this);
     },
-    startPeriod(workday) {
+    async startPeriod(workday) {
       const workPeriods = workday.work_periods;
       const workdayId = workday.id;
       const l = workPeriods.length;
@@ -117,7 +166,7 @@ export default {
         store.commit("setWorkPeriodType", "Work");
       }
       store.dispatch("startWorkPeriod", this);
-      this.getActualWorkday();
+      await this.getActualWorkday();
     },
     stopPeriod(workPeriod) {
       if (workPeriod.type == "Break") {
@@ -140,16 +189,23 @@ export default {
       store.dispatch("getGroup", this);
     },
     resetBreaktime() {
-      this.breaktime = moment
-        .utc(
-          moment().diff(
-            moment(
-              this.workday.work_periods[this.workday.work_periods.length - 1]
-                .start
+      if (
+        this.workday.work_periods[this.workday.work_periods.length - 1].type ==
+        "Work"
+      ) {
+        this.breaktime = 0;
+      } else {
+        this.breaktime = moment
+          .utc(
+            moment().diff(
+              moment(
+                this.workday.work_periods[this.workday.work_periods.length - 1]
+                  .start
+              )
             )
           )
-        )
-        .format("HH:mm:ss");
+          .format("HH:mm:ss");
+      }
     },
     resetWorktime() {
       this.worktime = moment
@@ -157,18 +213,39 @@ export default {
         .format("HH:mm:ss");
     },
     resetTime() {
-      this.resetBreaktime();
       this.resetWorktime();
+      this.resetBreaktime();
+    },
+    async getAdditionalHours() {
+      await store.dispatch("getAdditionalHoursByUser", this);
+    },
+    createAdditionalHour() {
+      var additionalTime =
+        this.group.worktime * 60 -
+        this.workday.worktime +
+        this.additionalMinutes;
+      if (additionalTime > 20) {
+        this.dialog = true;
+        store.commit("setAdditionalHour", {});
+        store.commit(
+          "setAdditionalHourUserId",
+          store.getters.getActualUserGroupId
+        );
+        store.commit("setAdditionalHourMinutes", additionalTime);
+      }
     },
   },
   async created() {
     await store.dispatch("getActualUser", this);
     store.commit("setWorkday", {});
-    store.commit("setWorkdayUserId", store.getters.getActualUserId);
+    store.commit("setWorkdayUserId", this.user.id);
     store.commit("setGroup", {});
     store.commit("setGroupId", store.getters.getActualUserGroupId);
+    store.commit("setAdditionalHour", {});
+    store.commit("setAdditionalHourUserId", store.getters.getActualUserGroupId);
     await this.getGroup();
     await this.getActualWorkday();
+    await this.getAdditionalHours();
     this.resetTime();
   },
   mounted: function () {

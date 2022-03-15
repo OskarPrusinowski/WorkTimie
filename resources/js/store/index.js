@@ -7,6 +7,8 @@ import workdays from './modules/workdays'
 import workPeriods from './modules/workPeriods'
 import permissions from './modules/permissions'
 import holidays from './modules/holidays'
+import additionalHours from './modules/additionalHours'
+import applications from './modules/applications'
 
 Vue.use(Vuex)
 
@@ -18,6 +20,8 @@ export default new Vuex.Store({
         workdays,
         workPeriods,
         permissions,
-        holidays
+        holidays,
+        additionalHours,
+        applications
     },
 })

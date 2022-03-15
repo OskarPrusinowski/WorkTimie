@@ -2,7 +2,9 @@
 
 namespace App\Models\Users;
 
+use App\Models\AdditionalHours\AdditionalHour;
 use App\Models\Groups\Group;
+use App\Models\Overtimes\Overtime;
 use App\Models\Role;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -58,5 +60,15 @@ class User extends Authenticatable
     public function role()
     {
         return $this->belongsTo(Role::class);
+    }
+
+    public function additionalHours()
+    {
+        return $this->hasMany(AdditionalHour::class);
+    }
+
+    public function overtimes()
+    {
+        return $this->hasMany(Overtime::class);
     }
 }
