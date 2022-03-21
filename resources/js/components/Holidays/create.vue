@@ -63,6 +63,7 @@
 </template>
 <script>
 import store from "../../store/index";
+import moment from "moment";
 export default {
   computed: {
     holiday() {
@@ -74,7 +75,7 @@ export default {
       dialog: false,
       rules: {
         required: (value) => !!value || "Wymagane.",
-        max: (value) => value.length <= 20 || "Musi zawierać do 20 liter",
+        max: (value) => value.length <= 40 || "Musi zawierać do 40 liter",
         min: (value) => 4 <= value.length || "Musi zawierać od 4 liter",
         phoneNumber: (v) => {
           if (!v.trim()) return true;
@@ -90,16 +91,16 @@ export default {
         confirmPassword: (value) =>
           this.user.password === value || "Hasła się nie zgadzają",
       },
-      picker: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
-        .toISOString()
-        .substr(0, 10),
+      picker: moment().format("YYYY-MM-DD"),
     };
   },
   methods: {
     createHoliday() {
-      store.dispatch("createHoliday", this);
-      this.dialog = false;
-      this.$emit("added");
+      if (this.$refs.form.validate()) {
+        store.dispatch("createHoliday", this);
+        this.dialog = false;
+        this.$emit("added");
+      }
     },
     async open() {
       await store.dispatch("setHolidayInit");

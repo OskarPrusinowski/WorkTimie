@@ -9,6 +9,8 @@ import permissions from './modules/permissions'
 import holidays from './modules/holidays'
 import additionalHours from './modules/additionalHours'
 import applications from './modules/applications'
+import overtimes from "./modules/overtimes"
+import leaves from "./modules/leaves"
 
 Vue.use(Vuex)
 
@@ -22,6 +24,8 @@ export default new Vuex.Store({
         permissions,
         holidays,
         additionalHours,
-        applications
+        applications,
+        overtimes,
+        leaves
     },
 })

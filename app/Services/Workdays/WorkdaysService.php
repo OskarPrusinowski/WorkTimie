@@ -17,4 +17,9 @@ class WorkdaysService
     {
         return $this->workdayModel->filtrByUser($userId)->month($date)->get();
     }
+
+    public function listAnother($userId)
+    {
+        return $this->workdayModel->with("user")->notUser(0)->today()->get();
+    }
 }

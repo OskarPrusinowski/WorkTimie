@@ -16,9 +16,9 @@ class WorkPeriodController extends Controller
         $this->middleware("permission:workdaysShow");
     }
 
-    public function start(Request $request, $workdayId)
+    public function start(Request $request)
     {
-        $this->workPeriodService->start($request->get("type"), $workdayId);
+        $this->workPeriodService->start($request->get("workPeriod"));
     }
 
     public function stop(Request $request, $workPeriodId)

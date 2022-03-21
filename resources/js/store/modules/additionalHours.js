@@ -3,7 +3,7 @@ const urlAdditionalHours = "http://127.0.0.1:8000/main-api/additionalhours/";
 const state = {
     additionalHour: {
         id: 0,
-        minutes: 0,
+        minutes: 60,
         date: "",
         user_id: 0
     },
@@ -49,15 +49,19 @@ const actions = {
             })
     },
 
-    createAdditionalHour(state, VueComponent) {
-        console.log(state.getters.getAdditionalHour);
-        VueComponent.$http.post(urlAdditionalHours + "create", { additionalHour: state.getters.getAdditionalHour })
+    async createAdditionalHour(state, VueComponent) {
+        await VueComponent.$http.post(urlAdditionalHours + "create", { additionalHour: state.getters.getAdditionalHour })
             .then(response => {
                 console.log(response);
             })
+    },
+    fetchAdditionalHour(state) {
+        state.commit("setAdditionalHourId", 0);
+        state.commit("setAdditionalHourMinutes", 60);
+        state.commit("setAdditionalHourDate", "");
+        state.commit("setAdditionalHourUserId", 0);
     }
 };
-
 
 export default {
     state,

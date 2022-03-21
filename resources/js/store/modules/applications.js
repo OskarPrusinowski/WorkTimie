@@ -5,9 +5,10 @@ const state = {
         id: 0,
         type: "",
         date: "",
-        changed_date: "",
+        first_date: "",
+        second_date: "",
         comment: "",
-        minutes: 0,
+        minutes: 60,
         acceptation_date: "",
         status: "",
         user_id: 0,
@@ -15,6 +16,9 @@ const state = {
     },
     acceptation_id: 0,
     applications: [],
+    month: "",
+    status: "",
+    userName: "",
 };
 
 const getters = {
@@ -22,13 +26,17 @@ const getters = {
     getApplicationId: state => state.application.id,
     getApplicationType: state => state.application.type,
     getApplicationDate: state => state.application.date,
-    getApplicationChangedDate: state => state.application.changed_date,
+    getApplicationFirstDate: state => state.application.first_date,
+    getApplicationSecondDate: state => state.application.second_date,
     getApplicationComment: state => state.application.comment,
     getApplicationMinutes: state => state.application.minutes,
     getApplicationAcceptationDate: state => state.application.acceptation_date,
     getApplicationAcceptationStatus: state => state.application.acceptation_status,
     getApplicationUserId: state => state.application.user_id,
+    getApplicationsUserName: state => state.userName,
     getApplications: state => state.applications,
+    getApplicationsMonth: state => state.month,
+    getApplicationsStatus: state => state.status,
     getAcceptationId: state => state.acceptation_id,
     getApplicationAccepted: state => state.application.accepted
 };
@@ -46,8 +54,11 @@ const mutations = {
     setApplicationDate(state, data) {
         state.application.date = data;
     },
-    setApplicationChangedDate(state, data) {
-        state.application.changed_date = data;
+    setApplicationFirstDate(state, data) {
+        state.application.first_date = data;
+    },
+    setApplicationSecondDate(state, data) {
+        state.application.second_date = data;
     },
     setApplicationComment(state, data) {
         state.application.comment = data;
@@ -72,7 +83,16 @@ const mutations = {
     },
     setApplicationAccepted(state, data) {
         state.application.accepted = data;
-    }
+    },
+    setApplicationsMonth(state, data) {
+        state.month = data;
+    },
+    setApplicationsStatus(state, data) {
+        state.status = data;
+    },
+    setApplicationsUserName(state, data) {
+        state.userName = data;
+    },
 };
 
 const actions = {
@@ -84,9 +104,13 @@ const actions = {
             })
     },
     getApplications(state, VueComponent) {
-        VueComponent.$http.get(urlApplication + "list")
+        const month = state.getters.getApplicationsMonth;
+        const status = state.getters.getApplicationsStatus;
+        const userName = state.getters.getApplicationsUserName;
+        VueComponent.$http.get(urlApplication + "list?month=" + month + "&status=" + status + "&userName=" + userName)
             .then(response => {
                 state.commit("setApplications", response.data.applications);
+                console.log(response.data.applications)
             })
     },
     createApplication(state, VueComponent) {
@@ -110,6 +134,12 @@ const actions = {
             .then(response => {
                 console.log(response);
             })
+    },
+    fetchApplicationInit(state) {
+        state.commit("setApplicationMinutes", 60)
+        state.commit("setApplicationComment", "")
+        state.commit("setApplicationFirstDate", "");
+        state.commit("setApplicationSecondDate", "");
     }
 };
 

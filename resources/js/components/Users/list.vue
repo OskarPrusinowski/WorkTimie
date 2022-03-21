@@ -1,5 +1,6 @@
 <template>
   <div v-if="permissions.usersShow">
+    <filtr-field @changedName="getUsers()" />
     <create @added="addedUser" v-if="permissions.usersManage" />
     <v-simple-table v-if="permissions.usersShow">
       <thead>
@@ -46,9 +47,11 @@
 <script>
 import store from "../../store/index";
 import create from "./create.vue";
+import filtrField from "./filtrField";
 export default {
   components: {
     create,
+    filtrField,
   },
   computed: {
     users() {
@@ -83,6 +86,8 @@ export default {
     },
   },
   created() {
+    console.log(this.$route.name);
+    store.commit("setUsersName", "");
     this.getUsers();
   },
 };

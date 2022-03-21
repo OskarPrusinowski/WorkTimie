@@ -1,14 +1,19 @@
 <template>
   <div v-if="permissions.workdaysShow">
     <div>
-      <strong>Harmonogram na czas: </strong>
-      {{ moment(today).format("YYYY-mm-DD") }}
-    </div>
-    <v-card>
+      <div>
+        <strong>Harmonogram na czas: </strong>
+        {{ moment(today).format("YYYY-MM-DD") }}
+      </div>
       <div class="pa-3">
+        <div style="float: right">
+          <another-users :userId="user.id" />
+        </div>
+
         <v-btn v-if="!workday.start" @click="startWork()">
           Rozpocznij pracę</v-btn
         >
+
         <span v-else>
           <div class="pb-4">
             <strong>Rozpoczęcie pracy: </strong
@@ -30,28 +35,47 @@
               {{
                 moment
                   .utc(
-                    moment(worktime, "HH:mm:ss").diff(
-                      moment(breaktime, "HH:mm:ss").add(
+                    moment(worktime, "H:mm:ss").diff(
+                      moment(breaktime, "H:mm:ss").add(
                         workday.breaktime,
                         "minutes"
                       )
                     )
                   )
-                  .format("HH:mm:ss")
+                  .format("H:mm:ss")
               }}
             </div>
             <div class="additionalHour">
-              <div v-if="additionalMinutes > 0">
+              <div v-if="workday.additional_hours > 0">
                 <strong> Musisz wypracować dodatkowo: </strong>
-                {{ additionalMinutes }} <strong> minut</strong>
+                {{ Math.floor(workday.additional_hours / 60) }}
+                <strong> godzin</strong>
+                <span v-if="workday.additional_hours % 60">
+                  {{ workday.additional_hours % 60 }}
+                  <strong> minut</strong></span
+                >
               </div>
-              <div v-else-if="additionalMinutes < 0">
-                <strong> Masz do odebrania: </strong> {{ additionalMinutes }}
+              <div v-else-if="workday.additional_hours < 0">
+                <strong> Masz do odebrania: </strong
+                >{{ -workday.additional_hours }}
                 <strong> minut</strong>
               </div>
             </div>
-            <div class="addApplication">
-              <create-application :userId="user.id" />
+            <div v-if="workday.overtime > 0" class="overtimes">
+              <div>
+                <strong>Zatwierdzone nadgodziny: </strong>
+                {{ workday.overtime / 60 }}
+              </div>
+            </div>
+            <div style="display: inline-block" class="addApplication ma-3">
+              <create-application :userId="user.id" :moment="moment" />
+            </div>
+            <div></div>
+            <div
+              style="display: inline-block"
+              class="addAdditionalHourApplication ma-3"
+            >
+              <create-additional-hour-application :userId="user.id" />
             </div>
             <div class="endOfTheWork">
               <strong>Szacowany czas zakończenia pracy: </strong>
@@ -59,27 +83,40 @@
                 moment(workday.start)
                   .add(group.worktime, "hours")
                   .add(workday.breaktime, "minutes")
-                  .add(additionalMinutes, "minutes")
+                  .add(workday.additional_hours, "minutes")
+                  .add(workday.overtime, "minutes")
                   .format("H:mm")
               }}
             </div>
           </div>
         </span>
       </div>
-      <v-divider></v-divider>
       <div class="pa-3" v-if="workday.start && !workday.stop">
-        <v-btn @click="startPeriod(workday)">
-          <span v-if="isBreak" @click="resetBreaktime()"> Zrób przerwę </span>
-          <span v-else>Koniec przerwy</span>
-        </v-btn>
+        <div class="startStopWorkPeriod ma-3">
+          <v-btn @click="startPeriod(workday, 0)">
+            <span v-if="isBreak" @click="resetBreaktime()"> Zrób przerwę </span>
+            <span v-else>Koniec przerwy</span>
+          </v-btn>
+        </div>
         <span v-if="!isBreak && workday.work_periods.length > 0">
           Przerwa trwa:
           {{ breaktime }}
         </span>
-        <work-periods :workPeriods="workday.work_periods" />
+        <div class="private ma-3">
+          <v-btn v-if="isBreak" @click="startPeriod(workday, 1)">
+            <span @click="resetBreaktime()"> Wyjście w celach prywatnych </span>
+          </v-btn>
+        </div>
+        <div class="workPeriods ma-3">
+          <work-periods :workPeriods="workday.work_periods" />
+        </div>
       </div>
-    </v-card>
-    <create-additional-hour :show="dialog" />
+      <create-additional-hour
+        :show="dialog"
+        :minutes="additionalTime"
+        @closeDialog="closeDialog()"
+      />
+    </div>
   </div>
 </template>
 
@@ -89,12 +126,16 @@ import store from "../../store/index";
 import workPeriods from "./workPeriods";
 import createAdditionalHour from "./createAdditionalHour";
 import createApplication from "./createApplication";
+import createAdditionalHourApplication from "./createAdditionalHourApplication.vue";
+import anotherUsers from "./anotherUsers";
 
 export default {
   components: {
     workPeriods: workPeriods,
     createAdditionalHour: createAdditionalHour,
     createApplication: createApplication,
+    createAdditionalHourApplication: createAdditionalHourApplication,
+    anotherUsers: anotherUsers,
   },
   data() {
     return {
@@ -103,6 +144,7 @@ export default {
       breaktime: 0,
       worktime: 0,
       dialog: false,
+      additionalTime: 0,
     };
   },
   computed: {
@@ -110,7 +152,7 @@ export default {
       return store.getters.getWorkday;
     },
     isBreak() {
-      return Boolean(this.workday.work_periods.length % 2 == 0);
+      return Boolean(this.workday.work_periods.length % 2 == 1);
     },
     group() {
       return store.getters.getGroup;
@@ -124,7 +166,7 @@ export default {
     additionalMinutes() {
       var minutes = 0;
       var additionalHours = this.additionalhours;
-      for (var i = 0; i < this.additionalhours.length; i++) {
+      for (var i = 0; i < additionalHours.length; i++) {
         minutes += additionalHours[i].minutes;
       }
       return minutes;
@@ -132,13 +174,30 @@ export default {
     user() {
       return store.getters.getActualUser;
     },
+    overtimes() {
+      return store.getters.getOvertimes;
+    },
+    overtimesMinutes() {
+      var minutes = 0;
+      var overtimes = this.overtimes;
+      for (var i = 0; i < overtimes.length; i++) {
+        minutes += overtimes[i].minutes;
+      }
+      return minutes;
+    },
   },
   methods: {
-    startWork() {
+    closeDialog() {
+      this.dialog = false;
+      this.getActualWorkday();
+    },
+    async startWork() {
       store.commit("setWorkday", {});
       store.commit("setWorkdayUserId", this.user.id);
+      store.commit("setWorkdayDefaultWorktime", this.group.worktime);
       store.dispatch("startWorkday", this);
-      this.getActualWorkday();
+      await this.getActualWorkday();
+      this.startPeriod(this.workday, 0);
     },
     async stopWork(workPeriods) {
       store.dispatch("stopWorkday", this);
@@ -152,18 +211,20 @@ export default {
     async getActualWorkday() {
       await store.dispatch("getWorkday", this);
     },
-    async startPeriod(workday) {
+    async startPeriod(workday, isPrivate) {
       const workPeriods = workday.work_periods;
       const workdayId = workday.id;
       const l = workPeriods.length;
       if (l != 0) {
         this.stopPeriod(workPeriods[l - 1]);
       }
+
       store.commit("setWorkPeriodWorkdayId", workdayId);
+      store.commit("setWorkPeriodIsPrivate", isPrivate);
       if (l % 2 == 0) {
-        store.commit("setWorkPeriodType", "Break");
-      } else {
         store.commit("setWorkPeriodType", "Work");
+      } else {
+        store.commit("setWorkPeriodType", "Break");
       }
       store.dispatch("startWorkPeriod", this);
       await this.getActualWorkday();
@@ -178,7 +239,11 @@ export default {
           store.getters.getWorkdayBreaktime +
             parseInt(
               moment.utc(moment().diff(moment(workPeriod.start))).format("mm")
-            )
+            ) +
+            parseInt(
+              moment.utc(moment().diff(moment(workPeriod.start))).format("HH")
+            ) *
+              60
         );
         store.dispatch("updateWorkday", this);
       }
@@ -204,13 +269,13 @@ export default {
               )
             )
           )
-          .format("HH:mm:ss");
+          .format("H:mm:ss");
       }
     },
     resetWorktime() {
       this.worktime = moment
         .utc(moment().diff(moment(this.workday.start)))
-        .format("HH:mm:ss");
+        .format("H:mm:ss");
     },
     resetTime() {
       this.resetWorktime();
@@ -219,19 +284,22 @@ export default {
     async getAdditionalHours() {
       await store.dispatch("getAdditionalHoursByUser", this);
     },
+    async getOvertimes() {
+      await store.dispatch("getOvertimesToday", this);
+    },
     createAdditionalHour() {
-      var additionalTime =
+      this.additionalTime =
         this.group.worktime * 60 -
         this.workday.worktime +
         this.additionalMinutes;
-      if (additionalTime > 20) {
+      if (this.additionalTime > 20) {
         this.dialog = true;
         store.commit("setAdditionalHour", {});
         store.commit(
           "setAdditionalHourUserId",
           store.getters.getActualUserGroupId
         );
-        store.commit("setAdditionalHourMinutes", additionalTime);
+        store.commit("setAdditionalHourMinutes", this.additionalTime);
       }
     },
   },
@@ -242,17 +310,19 @@ export default {
     store.commit("setGroup", {});
     store.commit("setGroupId", store.getters.getActualUserGroupId);
     store.commit("setAdditionalHour", {});
-    store.commit("setAdditionalHourUserId", store.getters.getActualUserGroupId);
+    store.commit("setAdditionalHourUserId", this.user.id);
+    store.commit("setOvertimesUserId", this.user.id);
     await this.getGroup();
     await this.getActualWorkday();
     await this.getAdditionalHours();
+    await this.getOvertimes();
     this.resetTime();
   },
   mounted: function () {
     this.$nextTick(function () {
       window.setInterval(() => {
         this.resetTime();
-      }, 10000);
+      }, 1000);
     });
   },
 };

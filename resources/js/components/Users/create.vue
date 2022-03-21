@@ -67,7 +67,7 @@
                 class="v-label theme--light"
                 style="left: 0px; right: auto; position: relative"
               >
-                Rozpoczęcie zatrudnienia
+                Data rozpoczęcia zatrudnienia
               </legend>
               <v-date-picker
                 v-model="user.date_start_employment"
@@ -143,11 +143,12 @@ export default {
   },
   methods: {
     createUser(user) {
-      console.log(this.$refs);
-      store.commit("setUser", user);
-      store.dispatch("createUser", this);
-      this.dialog = false;
-      this.$emit("added");
+      if (this.$refs.form.validate()) {
+        store.commit("setUser", user);
+        store.dispatch("createUser", this);
+        this.dialog = false;
+        this.$emit("added");
+      }
     },
     getGroups() {
       store.dispatch("getGroups", this);

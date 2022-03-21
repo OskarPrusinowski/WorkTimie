@@ -12,7 +12,9 @@ const state = {
         password: "",
         group_id: 1,
     },
-    users: []
+    users: [],
+    date: "",
+    name: "",
 };
 
 const getters = {
@@ -27,7 +29,9 @@ const getters = {
     getActualUserGroupId: state => state.user.group_id,
     getUserPassword: state => state.user.password,
     getUserGroupId: state => state.user.group_id,
-    getUsers: state => state.users
+    getUsers: state => state.users,
+    getUsersName: state => state.name,
+    getUsersDate: state => state.date
 };
 
 const mutations = {
@@ -63,12 +67,27 @@ const mutations = {
     },
     setUsers(state, data) {
         state.users = data;
+    },
+    setUsersName(state, data) {
+        state.name = data;
+    },
+    setUsersDate(state, data) {
+        state.date = data;
     }
 };
 
 const actions = {
     getUsers(state, VueComponent) {
-        VueComponent.$http.get(urlUser + "list")
+        const name = state.getters.getUsersName;
+        VueComponent.$http.get(urlUser + "list?name=" + name)
+            .then(response => {
+                state.commit("setUsers", response.data.users);
+            })
+    },
+    getUsersByDateName(state, VueComponent) {
+        const date = state.getters.getUsersDate;
+        const name = state.getters.getUsersName;
+        VueComponent.$http.get(urlUser + "listWithFiltr?date=" + date + "&name=" + name)
             .then(response => {
                 state.commit("setUsers", response.data.users);
             })

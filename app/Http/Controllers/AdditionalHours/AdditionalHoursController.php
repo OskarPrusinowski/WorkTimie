@@ -17,7 +17,7 @@ class AdditionalHoursController extends Controller
 
     public function listByUser($userId)
     {
-        $additionalHour = $this->additionalHoursService->getAdditionalHoursByUser($userId);
+        $additionalHour = $this->additionalHoursService->listToday($userId);
         return response()->json(['additionalHours' => $additionalHour]);
     }
 }

@@ -4,11 +4,15 @@ namespace App\Services\Workdays;
 
 use App\Models\Workdays\Workday;
 use Carbon\Carbon;
+use App\Services\Overtimes\OvertimesService;
+use App\Services\AdditionalHours\AdditionalHoursService;
 
 class WorkdayService
 {
 
     public Workday $workdayModel;
+    public OvertimesService $overtimesService;
+    public AdditionalHoursService $additionalHoursService;
 
     protected $weekMap = [
         0 => 'Niedziela',
@@ -20,24 +24,17 @@ class WorkdayService
         6 => 'Sobota',
     ];
 
-    public function __construct(Workday $workdayModel)
+    public function __construct(Workday $workdayModel, OvertimesService $overtimesService, AdditionalHoursService $additionalHoursService)
     {
         $this->workdayModel = $workdayModel;
+        $this->overtimesService = $overtimesService;
+        $this->additionalHoursService = $additionalHoursService;
     }
 
-    public function createWorkday($workday)
-    {
-        $this->workdayModel->create($workday);
-    }
-
-    public function start($userId)
-    {
-        $data = ['day' => $this->weekMap[Carbon::now()->addHour()->dayOfWeek], 'date' => Carbon::now()->addHour(), 'start' => Carbon::now()->addHour(), 'user_id' => $userId];
-        $this->createWorkday($data);
-    }
 
     public function getWorkday($id)
     {
+        $workday = $this->workdayModel->with("workPeriods")->find($id);
         return $this->workdayModel->with("workPeriods")->find($id);
     }
 
@@ -60,8 +57,45 @@ class WorkdayService
         $this->updateWorkday($workday, $workdayId);
     }
 
+    public function createWorkday($workday)
+    {
+        $workday['additional_hours'] = 0;
+        $workday['overtime'] = 0;
+
+        $this->workdayModel->create($workday);
+    }
+
+    public function start($userId, $defaultWorktime)
+    {
+        $workday = $this->getByUser($userId);
+        $workday->default_worktime = $defaultWorktime;
+        $workday->start = Carbon::now()->addHour();
+        $additionalHours = $this->additionalHoursService->listToday($workday['user_id']);
+        $overtimes = $this->overtimesService->listToday($workday['user_id']);
+        foreach ($additionalHours as $additionalHour) {
+            $workday->additional_hours += $additionalHour->minutes;
+        }
+        foreach ($overtimes as $overtime) {
+            $workday->overtime += $overtime->minutes;
+        }
+        $workday->save();
+    }
+
     public function getByUser($userId)
     {
-        return $this->workdayModel->with("workPeriods")->filtrByUser($userId)->today()->limit(1)->get();
+        return $this->workdayModel->with("workPeriods")->filtrByUser($userId)->today()->first();
+    }
+
+    public function add($userId, $minutes, $type)
+    {
+        $workday = $this->getByUser($userId);
+        if ($workday) {
+            if ($type == 'Nadgodziny') {
+                $workday->overtime += $minutes;
+            } else {
+                $workday->additional_hours += $minutes;
+            }
+            $workday->save();
+        }
     }
 }

@@ -22,7 +22,9 @@ return new class extends Migration
             $table->dateTime("stop")->nullable();
             $table->integer("breaktime")->nullable();
             $table->integer("worktime")->nullable();
-            $table->integer("overtime")->nullable();
+            $table->integer("overtime")->default(0);
+            $table->integer("additional_hours")->default(0);
+            $table->integer("default_worktime")->nullable();
             $table->bigInteger("user_id")->unsigned()->nullable();
             $table->timestamps();
             $table->softDeletes();

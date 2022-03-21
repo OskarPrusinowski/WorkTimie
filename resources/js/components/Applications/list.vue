@@ -1,5 +1,14 @@
 <template>
   <div>
+    <div>
+      <div style="float: right">
+        <status-filtr @changedStatus="getApplications()" />
+      </div>
+      <div>
+        <filtr-field @changedName="getApplications()"></filtr-field>
+      </div>
+      <div></div>
+    </div>
     <v-simple-table>
       <thead>
         <tr>
@@ -7,7 +16,8 @@
           <th class="text-left">Użytkownik</th>
           <th class="text-left">Typ</th>
           <th class="text-left">Data wysłania</th>
-          <th class="text-left">Data</th>
+          <th class="text-left">Pierwsza data</th>
+          <th class="text-left">Druga data</th>
           <th class="text-left">Ilość godzin</th>
           <th class="text-left">Komentarz</th>
           <th class="text-left">Status</th>
@@ -18,16 +28,25 @@
       <tbody>
         <tr v-for="(application, index) in applications" :key="application.id">
           <td class="text-left">{{ index + 1 }}</td>
-          <td class="text-left">{{ application.user.name }}</td>
+          <td class="text-left">
+            {{ application.user.name }} {{ application.user.surname }}
+          </td>
           <td class="text-left">{{ application.type }}</td>
           <td class="text-left">{{ application.date }}</td>
-          <td class="text-left">{{ application.changed_date }}</td>
-          <td class="text-left">{{ application.minutes / 60 }}</td>
+          <td class="text-left" v-if="application.first_date">
+            {{ application.first_date }}
+          </td>
+          <td class="text-left" v-else>----------</td>
+          <td class="text-left">{{ application.second_date }}</td>
+          <td class="text-left" v-if="application.minutes">
+            {{ application.minutes / 60 }}
+          </td>
+          <td class="text-left" v-else>----------</td>
           <td class="text-left">{{ application.comment }}</td>
           <td class="text-left">{{ application.status }}</td>
           <td class="text-left">
             <v-btn
-              @click="accept(application.id)"
+              @click="accept(application)"
               :disabled="application.acceptation_date"
             >
               <v-icon>mdi-check-bold </v-icon>
@@ -35,7 +54,7 @@
           </td>
           <td class="text-left">
             <v-btn
-              @click="rejct(application.id)"
+              @click="reject(application.id)"
               :disabled="application.acceptation_date"
             >
               <v-icon> mdi-close-thick </v-icon>
@@ -49,7 +68,21 @@
 
 <script>
 import store from "../../store/index";
+import monthPicker from "./monthPicker.vue";
+import moment from "moment";
+import statusFiltr from "./statusFiltr.vue";
+import filtrField from "./filtrField.vue";
 export default {
+  data() {
+    return {
+      moment: moment,
+    };
+  },
+  components: {
+    monthPicker,
+    statusFiltr,
+    filtrField,
+  },
   computed: {
     applications() {
       return store.getters.getApplications;
@@ -59,22 +92,77 @@ export default {
     },
   },
   methods: {
-    accept(id) {
-      store.commit("setApplicationAccepted", true);
-      this.considerApplication(id);
+    async createTwoAdditionalHours(application) {
+      store.commit("setAdditionalHour", {});
+      store.commit("setAdditionalHourMinutes", application.minutes);
+      store.commit("setAdditionalHourDate", application.second_date);
+      store.commit("setAdditionalHourUserId", application.user_id);
+      await store.dispatch("createAdditionalHour", this);
+      store.commit("setAdditionalHourMinutes", -application.minutes);
+      store.commit("setAdditionalHourDate", application.first_date);
+      await store.dispatch("createAdditionalHour", this);
+    },
+    update() {},
+    accept(application) {
+      store.commit("setApplicationAccepted", 1);
+      this.considerApplication(application.id);
+      switch (application.type) {
+        case "Nadgodziny":
+          this.createOvertime(application);
+          this.addTimeWorkday(application);
+          break;
+        case "Wcześniejsze zakończenie pracy":
+          this.createTwoAdditionalHours(application);
+          this.addTimeWorkday(application);
+          break;
+        case "Urlop":
+          this.createLeave(application);
+          break;
+      }
+    },
+    addTimeWorkday(application) {
+      store.commit("setWorkdaysUserId", this.user.id);
+      store.commit("setWorkdaysDate", application.changed_date);
+      if (application.type == "Nadgodziny") {
+        store.commit("setWorkdaysMinutes", application.minutes);
+      } else {
+        store.commit("setWorkdaysMinutes", -application.minutes);
+      }
+      store.commit("setWorkdaysType", application.type);
+      store.dispatch("addTimeWorkday", this);
     },
     reject(id) {
-      store.commit("setApplicationAccepted", false);
+      store.commit("setApplicationAccepted", 0);
       this.considerApplication(id);
     },
     considerApplication(id) {
       store.commit("setApplicationId", id);
       store.commit("setAcceptationId", this.user.id);
       store.dispatch("considerApplcation", this);
+      this.getApplications();
+    },
+    createLeave(application) {
+      store.commit("setLeave", {});
+      store.commit("setLeaveStart", application.first_date);
+      store.commit("setLeaveEnd", application.second_date);
+      store.commit("setLeaveUserId", application.user_id);
+      store.dispatch("createLeave", this);
+    },
+    createOvertime(application) {
+      store.commit("setOvertime", {});
+      store.commit("setOvertimeMinutes", application.minutes);
+      store.commit("setOvertimeDate", application.second_date);
+      store.commit("setOvertimeUserId", application.user_id);
+      store.dispatch("createOvertime", this);
+    },
+    getApplications() {
+      store.dispatch("getApplications", this);
     },
   },
   created() {
-    store.dispatch("getApplications", this);
+    store.commit("setApplicationsMonth", this.moment().format("YYYY-MM"));
+    store.commit("setApplicationsUserName", "");
+    this.getApplications();
   },
 };
 </script>

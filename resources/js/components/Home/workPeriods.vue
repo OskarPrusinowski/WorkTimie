@@ -2,15 +2,13 @@
   <div class="text-center">
     <v-dialog v-model="dialog" width="500">
       <template v-slot:activator="{ on, attrs }">
-        <v-btn color="red lighten-2" dark v-bind="attrs" v-on="on">
+        <v-btn color="blue lighten-2" dark v-bind="attrs" v-on="on">
           Szczegóły
         </v-btn>
       </template>
 
       <v-card>
-        <v-card-title class="text-h5 grey lighten-2">
-          Privacy Policy
-        </v-card-title>
+        <v-card-title class="text-h5 grey lighten-2"> Szczegóły </v-card-title>
 
         <v-card-text>
           <v-simple-table>
@@ -29,7 +27,8 @@
                 :key="workPeriod.id"
               >
                 <td>{{ index + 1 }}</td>
-                <td>{{ workPeriod.type }}</td>
+                <td v-if="workPeriod.type == 'Work'">Praca</td>
+                <td v-else>Przerwa</td>
                 <td>{{ moment(workPeriod.start).format("H:mm:ss") }}</td>
                 <td v-if="workPeriod.stop">
                   {{
@@ -37,14 +36,14 @@
                       .utc(
                         moment(workPeriod.stop).diff(moment(workPeriod.start))
                       )
-                      .format("HH:mm")
+                      .format("H:mm")
                   }}
                 </td>
                 <td v-else>
                   {{
                     moment
                       .utc(moment().diff(moment(workPeriod.start)))
-                      .format("HH:mm")
+                      .format("H:mm")
                   }}
                 </td>
                 <td v-if="workPeriod.stop">
@@ -60,7 +59,9 @@
 
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="primary" text @click="dialog = false"> Zamknij </v-btn>
+          <v-btn depressed color="primary" @click="dialog = false">
+            Zamknij
+          </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>

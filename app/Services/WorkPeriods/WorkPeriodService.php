@@ -24,10 +24,10 @@ class WorkPeriodService
         $this->workPeriodModel->create($workPeriod);
     }
 
-    public function start($type, $workdayId)
+    public function start($workPeriod)
     {
-        $weekPeriod = ['type' => $type, 'start' => Carbon::now()->addHour(), 'workday_id' => $workdayId];
-        $this->createWorkPeriod($weekPeriod);
+        $workPeriod['start'] = Carbon::now()->addHour();
+        $this->createWorkPeriod($workPeriod);
     }
 
     public function updateWorkPeriod($newWorkPeriod, $workPeriodId)

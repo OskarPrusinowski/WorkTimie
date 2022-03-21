@@ -13,7 +13,7 @@ class Workday extends Model
 {
     use HasFactory, softDeletes;
 
-    protected $fillable = ['holiday', 'day', 'date', 'start', 'stop', 'breaktime', 'worktime', 'overtime', 'user_id'];
+    protected $fillable = ['holiday', 'day', 'date', 'start', 'stop', 'breaktime', 'worktime', 'overtime', 'additional_hours', 'default_worktime', 'user_id'];
 
     public function user()
     {
@@ -32,7 +32,7 @@ class Workday extends Model
 
     public function scopeToday($query)
     {
-        return $query->where('start', '>', Carbon::now()->addHour()->startOfDay());
+        return $query->where('date', Carbon::now()->addHour()->format('Y-m-d'));
     }
 
     public function scopeMonth($query, $month)
@@ -40,5 +40,10 @@ class Workday extends Model
         $start = (new Carbon($month))->startOfMonth();
         $stop = (new Carbon($month))->endOfMonth();
         return $query->whereBetween('date', [$start, $stop]);
+    }
+
+    public function scopeNotUser($query, $userId)
+    {
+        return $query->where("user_id", '!=', $userId);
     }
 }

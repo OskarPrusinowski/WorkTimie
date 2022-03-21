@@ -15,9 +15,9 @@ class ApplicationsController extends Controller
         $this->applicationsSerivce = $applicationsSerivce;
     }
 
-    public function list()
+    public function list(Request $request)
     {
-        $applications = $this->applicationsSerivce->list();
+        $applications = $this->applicationsSerivce->list($request->month, $request->status, $request->userName);
         return response()->json(['applications' => $applications]);
     }
 }

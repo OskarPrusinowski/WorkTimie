@@ -14,7 +14,7 @@ class AdditionalHoursService
         $this->additionalHourModel = $additionalHourModel;
     }
 
-    public function getAdditionalHoursByUser($userId)
+    public function listToday($userId)
     {
         return $this->additionalHourModel->byUser($userId)->today()->get();
     }

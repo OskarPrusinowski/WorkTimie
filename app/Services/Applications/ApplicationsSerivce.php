@@ -3,6 +3,7 @@
 namespace App\Services\Applications;
 
 use App\Models\Applications\Application;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 
 class ApplicationsSerivce
 {
@@ -13,8 +14,12 @@ class ApplicationsSerivce
         $this->applicationModel = $applicationModel;
     }
 
-    public function list()
+    public function list($month, $status, $userName)
     {
-        return $this->applicationModel->with("user")->get();
+        $userName = $userName ? $userName : "";
+        $status = $status ? $status : "";
+        return $this->applicationModel->with("user")->month($month)->status($status)->whereHas('user', function (Builder $query) use ($userName) {
+            $query->userName($userName);
+        })->get();
     }
 }

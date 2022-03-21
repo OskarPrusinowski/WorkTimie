@@ -22,8 +22,8 @@ class Holiday extends Model
 
     public function scopeYear($query, $year)
     {
-        $start = (new Carbon($year))->startOfYear();
-        $stop = (new Carbon($year))->endOfYear();
+        $start = Carbon::createFromFormat('Y', $year)->startOfYear();
+        $stop = Carbon::createFromFormat('Y', $year)->endOfYear();
         return $query->whereBetween('date', [$start, $stop]);
     }
 

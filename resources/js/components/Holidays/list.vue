@@ -1,34 +1,5 @@
 <template>
   <div v-if="permissions.holidaysShow">
-    <v-col class="ma-0 pb-0 pt-2" md="3">
-      <v-row justify="center">
-        <v-date-picker
-          v-model="picker"
-          type="month"
-          min="2010-01-01"
-          max="2030-12-30"
-          @change="changeMonth()"
-        ></v-date-picker>
-      </v-row>
-    </v-col>
-    <v-divider></v-divider>
-    <v-col class="ma-0 pb-0 pt-2" md="3">
-      <v-row justify="center">
-        <strong> {{ picker.substr(0, 4) }} </strong>
-        <v-switch
-          v-model="
-            freeSaturdays[parseInt(picker.substr(0, 4)) - firstFreeSaturdays]
-              .free
-          "
-          :label="'Wolne w sobotę'"
-          @change="
-            changeFreeSatudays(
-              freeSaturdays[parseInt(picker.substr(0, 4)) - firstFreeSaturdays]
-            )
-          "
-        ></v-switch>
-      </v-row>
-    </v-col>
     <v-divider></v-divider>
     <create v-if="permissions.holidaysManage" @added="addedHoliday" />
     <v-simple-table>
@@ -63,18 +34,15 @@
 <script>
 import store from "../../store/index";
 import create from "./create";
+import yearPicker from "./yearPicker";
 
 export default {
   data() {
-    return {
-      picker: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
-        .toISOString()
-        .substr(0, 7),
-      switch1: false,
-    };
+    return {};
   },
   components: {
     create,
+    yearPicker,
   },
   computed: {
     permissions() {
@@ -85,12 +53,6 @@ export default {
     },
     holidaysDate() {
       return store.getters.getHolidaysDate;
-    },
-    freeSaturdays() {
-      return store.getters.getHolidaysFreeSaturdays;
-    },
-    firstFreeSaturdays() {
-      return store.getters.getHolidaysFistFreeSaturday;
     },
   },
   methods: {
@@ -105,26 +67,6 @@ export default {
       store.dispatch("deleteHoliday", this);
       this.getHolidays();
     },
-    changeMonth() {
-      store.commit("setHolidaysDate", this.picker);
-      this.getHolidays();
-    },
-    async changeFreeSatudays(FreeSaturday) {
-      store.commit("setHolidaysDate", this.picker.substr(0, 4));
-      store.commit("setHolidaysFreeSaturdayFree", FreeSaturday.free);
-      store.dispatch("setHolidaysFreeSaturdays", this);
-      store.commit("setHolidaysFreeSaturdayId", FreeSaturday.id);
-      await store.dispatch("changeHolidaysFreeSaturdays", this);
-      this.getHolidays();
-    },
-    getFreeSaturdays() {
-      store.dispatch("getHolidaysFreeSaturdays", this);
-    },
-  },
-  created() {
-    this.changeMonth();
-    this.getFreeSaturdays();
-    this.switch1 = store.getters.getHolidaysFreeSaturdays;
   },
 };
 </script>

@@ -10,6 +10,7 @@ import VueRouter from 'vue-router'
 Vue.use(VueRouter);
 Vue.use(VueResource);
 
+
 Vue.http.interceptors.push((request) => {
     let token = document.head.querySelector('meta[name="csrf-token"]');
     if (token) {

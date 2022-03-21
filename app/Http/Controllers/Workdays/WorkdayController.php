@@ -17,9 +17,9 @@ class WorkdayController extends Controller
         $this->middleware("permission:workdaysManage");
     }
 
-    public function start($userId)
+    public function start(Request $request)
     {
-        $this->workdayService->start($userId);
+        $this->workdayService->start($request->userId, $request->defaultWorktime);
     }
 
     public function stop(Request $request, $workdayId)
@@ -36,5 +36,10 @@ class WorkdayController extends Controller
     {
         $workday = $this->workdayService->getByUser($userId);
         return response()->json(['workday' => $workday]);
+    }
+
+    public function add(Request $request, $userId)
+    {
+        $this->workdayService->add($userId, $request->minutes, $request->type);
     }
 }

@@ -22,4 +22,10 @@ class WorkdaysController extends Controller
         $workdays = $this->workdaysService->list($userId, $request->date);
         return response()->json(['workdays' => $workdays]);
     }
+
+    public function listAnother($userId)
+    {
+        $workdays = $this->workdaysService->listAnother($userId);
+        return response()->json(['workdays' => $workdays]);
+    }
 }

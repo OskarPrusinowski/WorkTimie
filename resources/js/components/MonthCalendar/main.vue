@@ -1,16 +1,5 @@
 <template>
   <div v-if="permissions.workdaysShow">
-    <v-col class="ma-0 pb-0 pt-2" md="3" justify="center">
-      <v-row justify="center">
-        <v-date-picker
-          v-model="picker"
-          type="month"
-          :min="moment(actualUser.date_start_employment).format('y-MM')"
-          :max="moment(maxMonth).format('y-MM')"
-          @change="getWorkDays()"
-        ></v-date-picker>
-      </v-row>
-    </v-col>
     <v-divider></v-divider>
     <v-simple-table id="table">
       <thead>
@@ -50,7 +39,7 @@
           </td>
           <td class="text-left" v-else></td>
           <td class="text-left">{{ workday.breaktime }}</td>
-          <td class="text-left">!!NADGODZINY!!</td>
+          <td class="text-left">{{ workday.overtime }}</td>
         </tr>
       </tbody>
     </v-simple-table>
@@ -67,13 +56,16 @@ import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 import store from "../../store/index";
 import moment from "moment";
+import monthPicker from "./monthPicker.vue";
+
 export default {
+  components: {
+    monthPicker,
+  },
   data() {
     return {
       moment: moment,
-      picker: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
-        .toISOString()
-        .substr(0, 7),
+      picker: moment().format("YYYY-MM"),
     };
   },
   computed: {
@@ -87,7 +79,7 @@ export default {
       if (this.actualUser.date_stop_employment) {
         return this.actualUser.date_stop_employment;
       }
-      return new Date(Date.now());
+      return moment().format("YYYY-MM-DD");
     },
     permissions() {
       return store.getters.getUserPermissions;
@@ -95,7 +87,6 @@ export default {
   },
   methods: {
     async getWorkDays() {
-      store.commit("setWorkdaysDate", this.picker);
       await store.dispatch("getWorkdays", this);
     },
     changeMonth(id) {

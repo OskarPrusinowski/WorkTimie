@@ -17,7 +17,8 @@ return new class extends Migration
             $table->id();
             $table->string("type")->nullable();
             $table->date("date")->nullable();
-            $table->date("changed_date")->nullable();
+            $table->date("first_date")->nullable();
+            $table->date("second_date")->nullable();
             $table->longText("comment")->nullable();
             $table->integer("minutes")->nullable();
             $table->date("acceptation_date")->nullable();

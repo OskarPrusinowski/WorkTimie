@@ -17,7 +17,7 @@ class HolidaysService
 
     public function list($date)
     {
-        return $this->holidayModel->month($date)->ascDate()->get();
+        return $this->holidayModel->year($date)->ascDate()->get();
     }
 
     public function makeFreeSaturdays($date)

@@ -4,9 +4,10 @@ const state = {
     workPeriod: {
         id: 0,
         type: "",
-        start: 0,
-        stop: 0,
+        start: "",
+        stop: "",
         workday_id: 0,
+        is_private: 0
     }
 }
 
@@ -14,7 +15,8 @@ const getters = {
     getWorkPeriod: state => state.workPeriod,
     getWorkPeriodId: state => state.workPeriod.id,
     getWorkPeriodWorkdayId: state => state.workPeriod.workday_id,
-    getWorkPeriodType: state => state.workPeriod.type
+    getWorkPeriodType: state => state.workPeriod.type,
+    getWorkPeriodIsPrivate: state => state.workPeriod.is_private,
 }
 
 const mutations = {
@@ -29,13 +31,16 @@ const mutations = {
     },
     setWorkPeriodType(state, data) {
         state.workPeriod.type = data;
-    }
+    },
+    setWorkPeriodIsPrivate(state, data) {
+        state.workPeriod.is_private = data;
+    },
 }
 
 const actions = {
     startWorkPeriod(state, VueComponent) {
-        const workday_id = state.getters.getWorkPeriodWorkdayId;
-        VueComponent.$http.post(urlWorkPeriods + "start/" + workday_id, { type: state.getters.getWorkPeriodType })
+        console.log(state.getters.getWorkPeriod)
+        VueComponent.$http.post(urlWorkPeriods + "start", { workPeriod: state.getters.getWorkPeriod })
             .then(response => {
                 console.log(response);
                 state.commit("setWorkPeriod", response.data.workPeriod);

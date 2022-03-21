@@ -4,14 +4,17 @@ namespace App\Models\Users;
 
 use App\Models\AdditionalHours\AdditionalHour;
 use App\Models\Groups\Group;
+use App\Models\Leaves\Leave;
 use App\Models\Overtimes\Overtime;
 use App\Models\Role;
+use App\Models\Workdays\Workday;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Carbon\Carbon;
 
 class User extends Authenticatable
 {
@@ -70,5 +73,25 @@ class User extends Authenticatable
     public function overtimes()
     {
         return $this->hasMany(Overtime::class);
+    }
+
+    public function workdays()
+    {
+        return $this->hasMany(Workday::class);
+    }
+
+    public function leaves()
+    {
+        return $this->hasMany(Leave::class);
+    }
+
+    public function scopeAdmin($query)
+    {
+        return $query->where("role_id", 1);
+    }
+
+    public function scopeUserName($query, $userName)
+    {
+        return $query->where('name', 'like', "%" . $userName . "%")->orWhere('surname', 'like', "%" . $userName . "%");
     }
 }

@@ -16,9 +16,15 @@ class UsersController extends Controller
         $this->middleware("permission:usersShow");
     }
 
-    public function list()
+    public function list(Request $request)
     {
-        $users = $this->usersService->list();
+        $users = $this->usersService->list($request->name);
+        return response()->json(['users' => $users]);
+    }
+
+    public function listWithFiltr(Request $request)
+    {
+        $users = $this->usersService->listWithFiltr($request->date, $request->name);
         return response()->json(['users' => $users]);
     }
 }

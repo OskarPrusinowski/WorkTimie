@@ -4,7 +4,7 @@
       <v-dialog v-model="dialog" width="500">
         <template v-slot:activator="{ on, attrs }">
           <v-btn
-            color="red lighten-2"
+            color="blue lighten-2"
             dark
             v-bind="attrs"
             v-on="on"
@@ -20,19 +20,18 @@
           </v-card-title>
 
           <v-card-text>
-            <v-col class="ma-0 mt-4 pb-0 pt-0" md="10">
+            <v-col class="ma-0 mt-2 pb-0 pt-0" md="10">
               <v-text-field
-                label="Typ"
-                outlined
-                v-model="application.type"
-                :rules="[rules.required, rules.min, rules.max]"
+                :rules="[rules.required]"
+                v-model="application.second_date"
+                label="Data nadgodzin"
+                disabled
               ></v-text-field>
-            </v-col>
-            <v-col class="ma-0 pb-0 pt-0" md="10">
               <v-date-picker
-                v-model="picker"
-                :min="moment().add(1, 'days').format('YYYY-MM-DD')"
-                :max="moment().add(1, 'months').format('YYYY-MM-DD')"
+                v-model="application.second_date"
+                :allowed-dates="allowedDates"
+                :min="minDate"
+                :max="maxDate"
               ></v-date-picker>
             </v-col>
             <v-col class="ma-0 pb-0 pt-0" md="10">
@@ -57,6 +56,9 @@
           <v-divider></v-divider>
 
           <v-card-actions>
+            <v-btn depressed color="error" @click="dialog = false">
+              Zamknij
+            </v-btn>
             <v-spacer></v-spacer>
             <v-btn depressed color="primary" @click="create()">
               Złóż wniosek
@@ -64,8 +66,8 @@
           </v-card-actions>
         </v-card>
       </v-dialog>
-    </div>
-  </v-form>
+    </div></v-form
+  >
 </template>
 <script>
 import store from "../../store/index";
@@ -74,11 +76,12 @@ export default {
   props: ["userId"],
   data() {
     return {
+      proba: "fsafaf",
       moment: moment,
+      minDate: moment().add(1, "days").format("YYYY-MM-DD"),
+      maxDate: moment().add(1, "months").format("YYYY-MM-DD"),
       dialog: false,
-      picker: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
-        .toISOString()
-        .substr(0, 10),
+      picker: moment().add(1, "days").format("YYYY-MM-DD"),
       hours: [
         { hour: 1, minutes: 60 },
         { hour: 2, minutes: 120 },
@@ -111,13 +114,19 @@ export default {
     },
   },
   methods: {
-    open() {},
-    create() {
-      store.commit("setApplicationChangedDate", this.picker);
-      store.commit("setApplicationUserId", this.userId);
-      store.dispatch("createApplication", this);
-      this.dialog = false;
+    open() {
+      this.picker = moment().add(1, "days").format("YYYY-MM-DD");
+      store.dispatch("fetchApplicationInit");
     },
+    create() {
+      if (this.$refs.form.validate()) {
+        store.commit("setApplicationType", "Nadgodziny");
+        store.commit("setApplicationUserId", this.userId);
+        store.dispatch("createApplication", this);
+        this.dialog = false;
+      }
+    },
+    allowedDates: (val) => moment(val).day() != 0 && moment(val).day() != 6,
   },
   watch: {
     dialog() {

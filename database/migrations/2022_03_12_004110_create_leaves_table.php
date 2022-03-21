@@ -15,9 +15,13 @@ return new class extends Migration
     {
         Schema::create('leaves', function (Blueprint $table) {
             $table->id();
+            $table->string("name")->nullable();
             $table->date("start")->nullable();
             $table->date("end")->nullable();
+            $table->bigInteger("user_id")->unsigned()->nullable();
+            $table->timestamps();
             $table->softDeletes();
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
         });
     }
 

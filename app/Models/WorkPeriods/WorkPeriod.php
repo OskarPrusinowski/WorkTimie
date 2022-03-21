@@ -11,7 +11,7 @@ class WorkPeriod extends Model
 {
     use HasFactory, softDeletes;
 
-    protected $fillable = ['type', 'start', 'stop', 'minutes', 'workday_id'];
+    protected $fillable = ['type', 'start', 'stop', 'minutes', 'workday_id','is_private'];
 
     public function workday()
     {
