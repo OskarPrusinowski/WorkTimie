@@ -22,4 +22,9 @@ class ApplicationsSerivce
             $query->userName($userName);
         })->get();
     }
+
+    public function listWaiting()
+    {
+        return $this->applicationModel->waiting()->get();
+    }
 }

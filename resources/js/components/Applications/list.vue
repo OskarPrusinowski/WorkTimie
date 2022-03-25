@@ -1,64 +1,82 @@
 <template>
-  <div>
+  <div v-if="permissions.applicationsShow">
+    <create-comment :dialog="dialog" @closed="update()" />
     <div>
-      <div style="float: right">
-        <status-filtr @changedStatus="getApplications()" />
-      </div>
-      <div>
-        <filtr-field @changedName="getApplications()"></filtr-field>
-      </div>
+      <status-filtr @changedStatus="getApplications()" />
+      <filtr-field @changedName="getApplications()"></filtr-field>
       <div></div>
     </div>
     <v-simple-table>
       <thead>
         <tr>
           <th class="text-left">Lp</th>
-          <th class="text-left">Użytkownik</th>
+          <th class="text-left">Numer wniosku</th>
+          <th class="text-left">Pracownik</th>
           <th class="text-left">Typ</th>
           <th class="text-left">Data wysłania</th>
-          <th class="text-left">Pierwsza data</th>
-          <th class="text-left">Druga data</th>
+          <th class="text-left">Termin</th>
+          <th class="text-left">Data akceptacji</th>
           <th class="text-left">Ilość godzin</th>
           <th class="text-left">Komentarz</th>
           <th class="text-left">Status</th>
-          <th class="text-left">Akceptuj</th>
-          <th class="text-left">Odrzuć</th>
+          <th class="text-left">Komentarz akceptującego</th>
         </tr>
       </thead>
       <tbody>
         <tr v-for="(application, index) in applications" :key="application.id">
           <td class="text-left">{{ index + 1 }}</td>
+          <td class="text-left">{{ application.number }}</td>
           <td class="text-left">
             {{ application.user.name }} {{ application.user.surname }}
           </td>
           <td class="text-left">{{ application.type }}</td>
           <td class="text-left">{{ application.date }}</td>
           <td class="text-left" v-if="application.first_date">
-            {{ application.first_date }}
+            {{ application.first_date }} - {{ application.second_date }}
+          </td>
+          <td class="text-left" v-else>{{ application.second_date }}</td>
+          <td class="text-left" v-if="application.acceptation_date">
+            {{ application.acceptation_date }}
           </td>
           <td class="text-left" v-else>----------</td>
-          <td class="text-left">{{ application.second_date }}</td>
           <td class="text-left" v-if="application.minutes">
             {{ application.minutes / 60 }}
           </td>
           <td class="text-left" v-else>----------</td>
           <td class="text-left">{{ application.comment }}</td>
-          <td class="text-left">{{ application.status }}</td>
-          <td class="text-left">
+
+          <td class="text-left" v-if="application.acceptation_date">
+            <div
+              v-if="application.status == 'Zaakceptowany'"
+              class="pa-4 ma-1 rounded-circle d-inline-block green"
+            ></div>
+            <div
+              v-else
+              class="pa-4 ma-1 rounded-circle d-inline-block red"
+            ></div>
+          </td>
+          <td class="text-left" v-else-if="true">
             <v-btn
+              v-if="permissions.overtimesManage"
               @click="accept(application)"
               :disabled="application.acceptation_date"
             >
               <v-icon>mdi-check-bold </v-icon>
             </v-btn>
-          </td>
-          <td class="text-left">
+
             <v-btn
+              v-if="permissions.overtimesManage"
               @click="reject(application.id)"
               :disabled="application.acceptation_date"
             >
               <v-icon> mdi-close-thick </v-icon>
             </v-btn>
+          </td>
+          <td class="text-left" v-else>
+            <div class="pa-4 ma-1 rounded-circle d-inline-block yellow"></div>
+          </td>
+          <td class="text-left">
+            {{ application.acceptation_comment }}
           </td>
         </tr>
       </tbody>
@@ -72,16 +90,19 @@ import monthPicker from "./monthPicker.vue";
 import moment from "moment";
 import statusFiltr from "./statusFiltr.vue";
 import filtrField from "./filtrField.vue";
+import createComment from "./createComment";
 export default {
   data() {
     return {
       moment: moment,
+      dialog: false,
     };
   },
   components: {
     monthPicker,
     statusFiltr,
     filtrField,
+    createComment,
   },
   computed: {
     applications() {
@@ -89,6 +110,9 @@ export default {
     },
     user() {
       return store.getters.getActualUser;
+    },
+    permissions() {
+      return store.getters.getUserPermissions;
     },
   },
   methods: {
@@ -138,15 +162,23 @@ export default {
     considerApplication(id) {
       store.commit("setApplicationId", id);
       store.commit("setAcceptationId", this.user.id);
+      this.dialog = true;
+    },
+    update() {
       store.dispatch("considerApplcation", this);
       this.getApplications();
+      store.dispatch("getWaitingApplicationsCounter", this);
+      this.dialog = false;
     },
-    createLeave(application) {
+    async createLeave(application) {
       store.commit("setLeave", {});
       store.commit("setLeaveStart", application.first_date);
       store.commit("setLeaveEnd", application.second_date);
       store.commit("setLeaveUserId", application.user_id);
-      store.dispatch("createLeave", this);
+      await store.dispatch("createLeave", this);
+      store.commit("setUser", {});
+      store.commit("setUserId", application.user_id);
+      store.dispatch("updateHolidaysCounter", this);
     },
     createOvertime(application) {
       store.commit("setOvertime", {});

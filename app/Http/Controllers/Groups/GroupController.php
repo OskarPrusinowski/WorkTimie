@@ -13,6 +13,8 @@ class GroupController extends Controller
     public function __construct(GroupService $groupService)
     {
         $this->groupService = $groupService;
+        $this->middleware("permission:groupsShow");
+        $this->middleware("permission:groupsMange");
     }
 
     public function show($id)

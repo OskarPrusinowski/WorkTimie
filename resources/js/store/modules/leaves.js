@@ -10,6 +10,7 @@ const state = {
     },
     leaves: [],
     userId: 0,
+    departmentId: 0,
     date: "",
     userName: ""
 };
@@ -23,6 +24,7 @@ const getters = {
     getLeaveUserId: state => state.leave.user_id,
     getLeaves: state => state.leaves,
     getLeavesUserId: state => state.userId,
+    getLeavesDepartmentId: state => state.departmentId,
     getLeavesDate: state => state.date,
     getLeavesUserName: state => state.userName,
 };
@@ -57,6 +59,9 @@ const mutations = {
     },
     setLeavesUserName(state, data) {
         state.userName = data;
+    },
+    setLeavesDepartmentId(state, data) {
+        state.departmentId = data;
     }
 };
 
@@ -68,8 +73,8 @@ const actions = {
                 state.commit("setLeaves", response.data.leaves)
             })
     },
-    createLeave(state, VueComponent) {
-        VueComponent.$http.post(urlLeave + "create", { leave: state.getters.getLeave })
+    async createLeave(state, VueComponent) {
+        await VueComponent.$http.post(urlLeave + "create", { leave: state.getters.getLeave })
             .then(response => {
                 console.log(response)
             })
@@ -77,7 +82,8 @@ const actions = {
     getLeaves(state, VueComponent) {
         const date = state.getters.getLeavesDate;
         const userName = state.getters.getLeavesUserName;
-        VueComponent.$http.get(urlLeave + "listByDate?date=" + date + "&userName=" + userName)
+        const departmentId = state.getters.getLeavesDepartmentId;
+        VueComponent.$http.get(urlLeave + "specialList?date=" + date + "&userName=" + userName + "&departmentId=" + departmentId)
             .then(response => {
                 state.commit("setLeaves", response.data.leaves)
             })

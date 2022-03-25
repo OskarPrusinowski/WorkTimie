@@ -58,23 +58,46 @@
               outlined
               :type="'password'"
               v-model="user.password"
-              :rules="[rules.required, rules.min, rules.max]"
+              :rules="[rules.required, rules.minPassword, rules.max]"
             ></v-text-field>
           </v-col>
           <v-col class="ma-0 pb-0 pt-2" md="10">
-            <v-row justify="center">
-              <legend
-                class="v-label theme--light"
-                style="left: 0px; right: auto; position: relative"
-              >
-                Data rozpoczęcia zatrudnienia
-              </legend>
+            <v-menu
+              v-model="menu"
+              :close-on-content-click="false"
+              transition="scale-transition"
+              offset-y
+              min-width="auto"
+            >
+              <template v-slot:activator="{ on, attrs }">
+                <v-text-field
+                  v-model="user.date_start_employment"
+                  label="Wybierz datę zatrudnienia"
+                  prepend-icon="mdi-calendar"
+                  readonly
+                  v-bind="attrs"
+                  v-on="on"
+                ></v-text-field>
+              </template>
               <v-date-picker
                 v-model="user.date_start_employment"
-              ></v-date-picker>
-            </v-row>
+                no-title
+                scrollable
+              >
+                <v-spacer></v-spacer>
+                <v-btn text color="primary" @click="menu = false"> OK </v-btn>
+              </v-date-picker>
+            </v-menu>
           </v-col>
-
+          <v-col class="ma-0 pb-0 pt-0" md="10">
+            <v-text-field
+              label="Ilość dni urlopu w roku"
+              outlined
+              :type="'number'"
+              v-model="user.counter_holidays"
+              :rules="[rules.required]"
+            ></v-text-field>
+          </v-col>
           <v-col class="ma-0 pb-0 pt-0" md="10">
             <v-select
               v-if="groups"
@@ -84,6 +107,17 @@
               item-value="id"
               outlined
               v-model="user.group_id"
+            ></v-select>
+          </v-col>
+          <v-col class="ma-0 pb-0 pt-0" md="10">
+            <v-select
+              v-if="departments"
+              :items="departments"
+              label="Wybierz dział"
+              item-text="name"
+              item-value="id"
+              outlined
+              v-model="user.department_id"
             ></v-select>
           </v-col>
 
@@ -109,6 +143,7 @@ export default {
   data() {
     return {
       dialog: false,
+      menu: false,
       show1: true,
       picker: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
         .toISOString()
@@ -116,7 +151,8 @@ export default {
       rules: {
         required: (value) => !!value || "Wymagane.",
         max: (value) => value.length <= 20 || "Musi zawierać do 20 liter",
-        min: (value) => 8 <= value.length || "Musi zawierać od 8 liter",
+        min: (value) => 3 <= value.length || "Musi zawierać od 3 liter",
+        minPassword: (value) => 8 <= value.length || "Musi zawierać od 8 liter",
         phoneNumber: (v) => {
           if (!v.trim()) return true;
           if (!isNaN(parseFloat(v)) && v >= 100000000 && v <= 999999999)
@@ -140,6 +176,9 @@ export default {
     groups() {
       return store.getters.getGroups;
     },
+    departments() {
+      return store.getters.getDepartments;
+    },
   },
   methods: {
     createUser(user) {
@@ -153,10 +192,14 @@ export default {
     getGroups() {
       store.dispatch("getGroups", this);
     },
+    getDepartments() {
+      store.dispatch("getDepartments", this);
+    },
     open() {
       store.dispatch("fetchUserInit");
       store.commit("setUserDateStartEmployment", this.picker);
       this.getGroups();
+      this.getDepartments();
     },
   },
   watch: {

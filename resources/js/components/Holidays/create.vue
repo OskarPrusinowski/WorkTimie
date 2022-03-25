@@ -29,19 +29,34 @@
               ></v-text-field>
             </v-col>
             <v-col class="ma-0 pb-0 pt-2" md="10">
-              <v-row justify="center">
-                <legend
-                  class="v-label theme--light"
-                  style="left: 0px; right: auto; position: relative"
-                >
-                  Data
-                </legend>
+              <v-menu
+                v-model="menu"
+                :close-on-content-click="false"
+                transition="scale-transition"
+                offset-y
+                min-width="auto"
+              >
+                <template v-slot:activator="{ on, attrs }">
+                  <v-text-field
+                    v-model="holiday.date"
+                    label="Wybierz datę"
+                    prepend-icon="mdi-calendar"
+                    readonly
+                    v-bind="attrs"
+                    v-on="on"
+                  ></v-text-field>
+                </template>
                 <v-date-picker
                   v-model="holiday.date"
+                  no-title
+                  scrollable
                   min="2010-01-01"
                   max="2030-12-30"
-                ></v-date-picker>
-              </v-row>
+                >
+                  <v-spacer></v-spacer>
+                  <v-btn text color="primary" @click="menu = false"> OK </v-btn>
+                </v-date-picker>
+              </v-menu>
             </v-col>
           </v-card-text>
 
@@ -73,6 +88,7 @@ export default {
   data() {
     return {
       dialog: false,
+      menu: false,
       rules: {
         required: (value) => !!value || "Wymagane.",
         max: (value) => value.length <= 40 || "Musi zawierać do 40 liter",
@@ -98,6 +114,12 @@ export default {
     createHoliday() {
       if (this.$refs.form.validate()) {
         store.dispatch("createHoliday", this);
+        if (
+          moment(this.holiday.date).day() == 0 ||
+          moment(this.holiday.date).day() == 6
+        ) {
+          store.dispatch("increaseCounterHolidays", this);
+        }
         this.dialog = false;
         this.$emit("added");
       }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Users;
 use App\Http\Controllers\Controller;
 use App\Services\Users\UserService;
 use Illuminate\Http\Request;
+use App\Http\Requests\Users\CreateUpdateUser;
 
 class UserController extends Controller
 {
@@ -23,12 +24,12 @@ class UserController extends Controller
         return response()->json(['user' => $user]);
     }
 
-    public function create(Request $response)
+    public function create(CreateUpdateUser $response)
     {
         $this->userService->createUser($response->get('user'));
     }
 
-    public function update(Request $request)
+    public function update(CreateUpdateUser $request)
     {
         $newUser = $request->get('user');
         $this->userService->updateUser($newUser, $newUser['id']);

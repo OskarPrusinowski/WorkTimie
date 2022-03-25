@@ -22,21 +22,18 @@
       <div
         class="usersCalendar"
         style="display: inline-block"
-        v-if="permissions.workdaysShow"
+        v-if="permissions.usersShow"
       >
         <router-link to="/usersCalendar">
-          <v-btn depressed color="primary"> Kalendarz użytkowników </v-btn>
+          <v-btn depressed color="primary"> Lista obecności </v-btn>
         </router-link>
       </div>
       <div
         class="calendars justify-center"
         justify="center"
-        style="display: inline-block; margin-left: 155px"
+        style="display: inline-block; margin-left: 45px"
       >
         <applications-month-picker v-if="$route.name == 'ApplicationsList'" />
-        <users-calendar-month-picker
-          v-else-if="$route.name == 'UsersCalendar'"
-        />
         <month-calendar-month-picker
           v-else-if="$route.name == 'MonthCalendar'"
         />
@@ -50,22 +47,30 @@
           v-if="permissions.usersShow"
         >
           <router-link to="/users/list">
-            <v-btn depressed color="primary"> Użytkownicy </v-btn>
+            <v-btn depressed color="primary"> Pracownicy </v-btn>
           </router-link>
         </div>
         <div
           class="applications"
           style="display: inline-block"
-          v-if="permissions.holidaysShow"
+          v-if="permissions.applicationsShow"
         >
           <router-link to="/applications/list">
-            <v-btn depressed color="primary"> Wnioski </v-btn>
+            <v-btn depressed color="primary">
+              <v-badge
+                color="red"
+                :content="applicationCounter"
+                v-if="applicationCounter"
+                >Wnioski</v-badge
+              >
+              <span v-else> Wnioski</span>
+            </v-btn>
           </router-link>
         </div>
         <div
           class="leaves"
           style="display: inline-block"
-          v-if="permissions.holidaysShow"
+          v-if="permissions.leavesManage"
         >
           <router-link to="/leaves/list">
             <v-btn depressed color="primary"> Lista urlopów </v-btn>
@@ -74,7 +79,7 @@
         <div
           class="leave"
           style="display: inline-block"
-          v-if="permissions.holidaysShow"
+          v-if="permissions.leavesShow"
         >
           <router-link to="/leaves/show">
             <v-btn depressed color="primary"> Urlop </v-btn>
@@ -121,6 +126,9 @@ export default {
     actualUser() {
       return store.getters.getActualUser;
     },
+    applicationCounter() {
+      return store.getters.getApplicationsCounter;
+    },
   },
   data() {
     return {
@@ -135,11 +143,17 @@ export default {
       store.dispatch("getActualUser", this);
       window.location.reload();
     },
+    countWaitingApplications() {
+      store.dispatch("getWaitingApplicationsCounter", this);
+    },
   },
   async beforeCreate() {
     await store.dispatch("getActualUser", this);
     store.commit("setPermissionsUserId", store.getters.getActualUserId);
     store.dispatch("getUserPermissions", this);
+  },
+  created() {
+    this.countWaitingApplications();
   },
 };
 </script>

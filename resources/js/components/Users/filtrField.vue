@@ -1,14 +1,11 @@
 <template>
-  <div>
-    <v-col cols="12" sm="6" md="3" style="flex-wrap: nowrap; overflow-x: auto">
-      <v-text-field
-        label="Nazwa użytkownika"
-        outlined
-        v-model="name"
-        @input="changed(name)"
-      ></v-text-field>
-    </v-col>
-  </div>
+  <v-col cols="12" sm="6" md="3" style="display: inline-block">
+    <v-text-field
+      label="Nazwa użytkownika"
+      v-model="name"
+      @input="changed(name)"
+    ></v-text-field>
+  </v-col>
 </template>
 <script>
 import store from "../../store/index";

@@ -42,8 +42,20 @@ class Workday extends Model
         return $query->whereBetween('date', [$start, $stop]);
     }
 
+    public function scopeBetween($query, $start, $stop)
+    {
+        $start = (new Carbon($start))->startOfDay();
+        $stop = (new Carbon($stop))->endOfDay();
+        return $query->whereBetween('date', [$start, $stop]);
+    }
+
     public function scopeNotUser($query, $userId)
     {
         return $query->where("user_id", '!=', $userId);
+    }
+
+    public function scopeLastStarted($query)
+    {
+        return $query->where("start", '!=', null)->where("stop", null)->orderBy('date');
     }
 }

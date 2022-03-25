@@ -30,11 +30,8 @@ class Leave extends Model
     }
     public function scopeMonth($query, $month)
     {
-        $start = (new Carbon($month))->startOfMonth();
-        $stop = (new Carbon($month))->endOfMonth();
-        //dump($date);
-        //dump($start);
-        //dd($stop);
+        $start = (new Carbon($month))->startOfMonth()->format("Y-m-d");
+        $stop = (new Carbon($month))->endOfMonth()->format("Y-m-d");
         return $query->whereBetween('start', [$start, $stop])->orWhere('end', '>', $start)->where('end', '<', $stop);
     }
 }

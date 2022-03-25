@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Users\User;
 use Carbon\Carbon;
 use Faker\Factory;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -25,8 +26,10 @@ class UsersSeeder extends Seeder
             "email" => "prukioksi@gmail.com",
             "password" => Hash::make("oskar1928"),
             "date_start_employment" => Carbon::now()->startOfYear(),
+            "current_counter_holidays" => 25,
             "role_id" => 1,
-            'group_id' => 1
+            'group_id' => 1,
+            'department_id' => 2,
         ]];
         $faker = Factory::create();
         for ($i = 0; $i < 30; $i++) {
@@ -36,8 +39,10 @@ class UsersSeeder extends Seeder
                 'email' => $faker->email,
                 "password" => Hash::make("dada"),
                 "date_start_employment" => $faker->date(),
+                'current_counter_holidays' => $faker->numberBetween(15, 30),
                 "role_id" => 2,
-                'group_id' => $faker->numberBetween(1, 3)
+                'group_id' => $faker->numberBetween(1, 3),
+                'department_id' => $faker->numberBetween(1, 3)
             ];
         }
         DB::table('users')->insert($data);

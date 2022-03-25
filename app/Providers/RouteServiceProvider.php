@@ -19,7 +19,7 @@ class RouteServiceProvider extends ServiceProvider
      */
     public const HOME = '/home';
 
-    protected $modules = ['users', 'groups', 'workdays', 'workPeriods', 'holidays', 'permissions', 'additionalhours', 'applications', 'overtimes', 'leaves'];
+    protected $modules = ['users', 'groups', 'workdays', 'workPeriods', 'holidays', 'permissions', 'additionalhours', 'applications', 'overtimes', 'leaves', 'departments'];
 
     /**
      * Define your route model bindings, pattern filters, etc.

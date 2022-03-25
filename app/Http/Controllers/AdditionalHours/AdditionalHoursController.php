@@ -13,6 +13,7 @@ class AdditionalHoursController extends Controller
     public function __construct(AdditionalHoursService $additionalHoursService)
     {
         $this->additionalHoursService = $additionalHoursService;
+        $this->middleware("permission:additionalHoursShow");
     }
 
     public function listByUser($userId)

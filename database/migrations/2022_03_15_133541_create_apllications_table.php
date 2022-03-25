@@ -15,11 +15,13 @@ return new class extends Migration
     {
         Schema::create('applications', function (Blueprint $table) {
             $table->id();
+            $table->string("number")->nullable();
             $table->string("type")->nullable();
             $table->date("date")->nullable();
             $table->date("first_date")->nullable();
             $table->date("second_date")->nullable();
             $table->longText("comment")->nullable();
+            $table->longText("acceptation_comment")->nullable();
             $table->integer("minutes")->nullable();
             $table->date("acceptation_date")->nullable();
             $table->string("status")->nullable();

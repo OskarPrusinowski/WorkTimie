@@ -23,18 +23,36 @@
           <v-divider></v-divider>
           <v-card-text>
             <v-col class="ma-0 mt-2 pb-0 pt-0" md="10">
-              <v-text-field
-                :rules="[rules.required]"
-                v-model="picker"
-                label="Data do wyrobienia"
-                disabled
-              ></v-text-field>
-              <v-date-picker
-                v-model="picker"
-                :min="minDate"
-                :max="maxDate"
-                :allowed-dates="allowedDates"
-              ></v-date-picker>
+              <v-menu
+                v-model="menu"
+                :close-on-content-click="false"
+                transition="scale-transition"
+                offset-y
+                min-width="auto"
+              >
+                <template v-slot:activator="{ on, attrs }">
+                  <v-text-field
+                    v-model="picker"
+                    label="Wybierz datę"
+                    prepend-icon="mdi-calendar"
+                    readonly
+                    v-bind="attrs"
+                    v-on="on"
+                    :rules="[rules.required]"
+                  ></v-text-field>
+                </template>
+                <v-date-picker
+                  v-model="picker"
+                  no-title
+                  scrollable
+                  :allowed-dates="allowedDates"
+                  :min="minDate"
+                  :max="maxDate"
+                >
+                  <v-spacer></v-spacer>
+                  <v-btn text color="primary" @click="menu = false"> OK </v-btn>
+                </v-date-picker>
+              </v-menu>
             </v-col>
           </v-card-text>
 
@@ -57,6 +75,7 @@ export default {
   props: ["show", "minutes"],
   data() {
     return {
+      menu: false,
       rules: {
         required: (value) => !!value || "Wymagane.",
         max: (value) => value.length <= 20 || "Musi zawierać do 20 liter",

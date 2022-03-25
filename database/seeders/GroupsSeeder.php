@@ -12,13 +12,13 @@ class GroupsSeeder extends Seeder
      *
      * @return void
      */
-    protected $groups = [['etat', 8], ['FV', 6], ['Umowa Zlecenie', 0]];
+    protected $groups = [['etat', 8, 1], ['FV', 6, 0], ['Umowa Zlecenie', 0, 0]];
 
     public function run()
     {
         $data = [];
         foreach ($this->groups as $group) {
-            $data[] = ['name' => $group[0], 'worktime' => $group[1]];
+            $data[] = ['name' => $group[0], 'worktime' => $group[1], 'can_make_holidays_up' => $group[2]];
         }
         DB::table('groups')->insert($data);
     }

@@ -5,6 +5,7 @@ use App\Http\Controllers\Applications\ApplicationController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/list', [ApplicationsController::class, 'list']);
+Route::get('/countWaiting', [ApplicationsController::class, 'countWaiting']);
 
 
 Route::get('/show/{id}', [ApplicationController::class, 'show']);

@@ -13,6 +13,7 @@ class OvertimesController extends Controller
     public function __construct(OverTimesService $overTimesService)
     {
         $this->overtimesService = $overTimesService;
+        $this->middleware("permission:overtimesShow");
     }
 
     public function listToday($userId)

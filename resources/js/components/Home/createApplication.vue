@@ -21,18 +21,36 @@
 
           <v-card-text>
             <v-col class="ma-0 mt-2 pb-0 pt-0" md="10">
-              <v-text-field
-                :rules="[rules.required]"
-                v-model="application.second_date"
-                label="Data nadgodzin"
-                disabled
-              ></v-text-field>
-              <v-date-picker
-                v-model="application.second_date"
-                :allowed-dates="allowedDates"
-                :min="minDate"
-                :max="maxDate"
-              ></v-date-picker>
+              <v-menu
+                v-model="menu"
+                :close-on-content-click="false"
+                transition="scale-transition"
+                offset-y
+                min-width="auto"
+              >
+                <template v-slot:activator="{ on, attrs }">
+                  <v-text-field
+                    v-model="application.second_date"
+                    label="Wybierz datę"
+                    prepend-icon="mdi-calendar"
+                    readonly
+                    v-bind="attrs"
+                    v-on="on"
+                    :rules="[rules.required]"
+                  ></v-text-field>
+                </template>
+                <v-date-picker
+                  v-model="application.second_date"
+                  no-title
+                  scrollable
+                  :allowed-dates="allowedDates"
+                  :min="minDate"
+                  :max="maxDate"
+                >
+                  <v-spacer></v-spacer>
+                  <v-btn text color="primary" @click="menu = false"> OK </v-btn>
+                </v-date-picker>
+              </v-menu>
             </v-col>
             <v-col class="ma-0 pb-0 pt-0" md="10">
               <v-textarea
@@ -77,6 +95,7 @@ export default {
   data() {
     return {
       proba: "fsafaf",
+      menu: false,
       moment: moment,
       minDate: moment().add(1, "days").format("YYYY-MM-DD"),
       maxDate: moment().add(1, "months").format("YYYY-MM-DD"),

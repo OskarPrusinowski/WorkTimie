@@ -1,6 +1,9 @@
 <template>
-  <div>
-    <create :userId="user.id" />
+  <div v-if="permissions.leavesShow">
+    <span>
+      Ilość wolnych dni dostępnych {{ user.current_counter_holidays }}</span
+    >
+    <create :userId="user.id" v-if="permissions.applicationsManage" />
     <v-simple-table>
       <thead>
         <tr>
@@ -32,6 +35,9 @@ export default {
     },
     user() {
       return store.getters.getActualUser;
+    },
+    permissions() {
+      return store.getters.getUserPermissions;
     },
   },
   methods: {

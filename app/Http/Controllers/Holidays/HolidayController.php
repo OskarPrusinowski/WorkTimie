@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Holidays;
 use App\Http\Controllers\Controller;
 use App\Services\Holidays\HolidayService;
 use Illuminate\Http\Request;
+use App\Http\Requests\Holidays\CreateHoliday;
 
 class HolidayController extends Controller
 {
@@ -17,7 +18,7 @@ class HolidayController extends Controller
         $this->middleware("permission:holidaysManage");
     }
 
-    public function create(Request $request)
+    public function create(CreateHoliday $request)
     {
         $this->holidayService->createHoliday($request->get("holiday"));
     }

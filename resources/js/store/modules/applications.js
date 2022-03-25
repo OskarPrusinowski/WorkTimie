@@ -3,11 +3,13 @@ const urlApplication = "http://127.0.0.1:8000/main-api/applications/";
 const state = {
     application: {
         id: 0,
+        number: "",
         type: "",
         date: "",
         first_date: "",
         second_date: "",
         comment: "",
+        acceptation_comment: "",
         minutes: 60,
         acceptation_date: "",
         status: "",
@@ -19,6 +21,7 @@ const state = {
     month: "",
     status: "",
     userName: "",
+    counter: 0
 };
 
 const getters = {
@@ -29,6 +32,7 @@ const getters = {
     getApplicationFirstDate: state => state.application.first_date,
     getApplicationSecondDate: state => state.application.second_date,
     getApplicationComment: state => state.application.comment,
+    getApplicationAcceptationComment: state => state.application.acceptation_comment,
     getApplicationMinutes: state => state.application.minutes,
     getApplicationAcceptationDate: state => state.application.acceptation_date,
     getApplicationAcceptationStatus: state => state.application.acceptation_status,
@@ -38,7 +42,8 @@ const getters = {
     getApplicationsMonth: state => state.month,
     getApplicationsStatus: state => state.status,
     getAcceptationId: state => state.acceptation_id,
-    getApplicationAccepted: state => state.application.accepted
+    getApplicationAccepted: state => state.application.accepted,
+    getApplicationsCounter: state => state.counter,
 };
 
 const mutations = {
@@ -93,6 +98,12 @@ const mutations = {
     setApplicationsUserName(state, data) {
         state.userName = data;
     },
+    setApplicationsCounter(state, data) {
+        state.counter = data;
+    },
+    setApplicationAcceptationComment(state, data) {
+        state.application.acceptation_comment = data;
+    }
 };
 
 const actions = {
@@ -130,7 +141,8 @@ const actions = {
         const id = state.getters.getApplicationId;
         const acceptationId = state.getters.getAcceptationId;
         const accepted = state.getters.getApplicationAccepted;
-        VueComponent.$http.put(urlApplication + "consider/" + id + "?acceptationId=" + acceptationId + "&accepted=" + accepted)
+        const acceptation_comment = state.getters.getApplicationAcceptationComment;
+        VueComponent.$http.put(urlApplication + "consider/" + id + "?acceptationId=" + acceptationId + "&accepted=" + accepted + "&acceptationComment=" + acceptation_comment)
             .then(response => {
                 console.log(response);
             })
@@ -140,6 +152,12 @@ const actions = {
         state.commit("setApplicationComment", "")
         state.commit("setApplicationFirstDate", "");
         state.commit("setApplicationSecondDate", "");
+    },
+    getWaitingApplicationsCounter(state, VueComponent) {
+        VueComponent.$http.get(urlApplication + "countWaiting")
+            .then(response => {
+                state.commit("setApplicationsCounter", response.data.counter)
+            })
     }
 };
 

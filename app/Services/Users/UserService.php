@@ -22,6 +22,7 @@ class UserService
 
     public function createUser($user)
     {
+        $user['current_counter_holidays'] = $user['counter_holidays'];
         $user['date_start_employment'] = Carbon::create($user['date_start_employment']);
         $user['password'] = Hash::make($user['password']);
         $user['role_id'] = 2;

@@ -12,7 +12,7 @@ class Application extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $fillable = ['type', 'date', 'first_date', 'second_date', 'comment', 'minutes', 'status', 'accepted', 'user_id'];
+    protected $fillable = ['type', 'date', 'first_date', 'second_date', 'comment', 'minutes', 'status', 'accepted', 'user_id', 'acceptation_comment', 'number'];
 
     public function user()
     {

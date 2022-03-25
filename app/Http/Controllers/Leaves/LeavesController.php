@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Leaves;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Services\Leaves\LeavesService;
+use App\Http\Requests\Leaves\FiltrLeaves;
 
 class LeavesController extends Controller
 {
@@ -13,6 +14,7 @@ class LeavesController extends Controller
     public function __construct(LeavesService $leavesService)
     {
         $this->leavesService = $leavesService;
+        $this->middleware("permission:leavesShow");
     }
 
     public function listByUser($userId)
@@ -21,9 +23,9 @@ class LeavesController extends Controller
         return response()->json(['leaves' => $leaves]);
     }
 
-    public function listByDate(Request $request)
+    public function specialList(FiltrLeaves $request)
     {
-        $leaves = $this->leavesService->listByDate($request->date, $request->userName);
+        $leaves = $this->leavesService->specialList($request->date, $request->userName, $request->departmentId);
         return response()->json(['leaves' => $leaves]);
     }
 

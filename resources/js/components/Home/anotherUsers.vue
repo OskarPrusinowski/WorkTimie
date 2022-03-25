@@ -1,12 +1,12 @@
 <template>
   <v-card>
-    <v-layout column style="height: 50vh"
-      ><v-flex style="overflow: auto">
+    <v-layout column
+      ><v-flex>
         <v-simple-table>
           <thead>
             <tr>
               <th>Status</th>
-              <th>Lista wszystkich użytkowników</th>
+              <th>Użytkownicy</th>
               <th>Przewdiywana godzina zakończenia</th>
             </tr>
           </thead>
@@ -18,20 +18,20 @@
               :key="workday.id"
             >
               <td v-if="workday.holiday">
-                <div class="pa-5 ma-1 rounded-circle d-inline-block grey"></div>
+                <div class="pa-4 ma-1 rounded-circle d-inline-block grey"></div>
               </td>
               <td v-else-if="workday.stop">
                 <div
-                  class="pa-5 ma-1 rounded-circle d-inline-block yellow"
+                  class="pa-4 ma-1 rounded-circle d-inline-block yellow"
                 ></div>
               </td>
               <td v-else-if="workday.start">
                 <div
-                  class="pa-5 ma-1 rounded-circle d-inline-block green"
+                  class="pa-4 ma-1 rounded-circle d-inline-block green"
                 ></div>
               </td>
               <td v-else>
-                <div class="pa-5 ma-1 rounded-circle d-inline-block red"></div>
+                <div class="pa-4 ma-1 rounded-circle d-inline-block red"></div>
               </td>
               <td>{{ workday.user.name }} {{ workday.user.surname }}</td>
               <td v-if="workday.stop">

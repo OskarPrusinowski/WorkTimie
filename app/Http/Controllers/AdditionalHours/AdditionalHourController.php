@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Services\AdditionalHours\AdditionalHourService;
 use Illuminate\Http\Request;
 use Laravel\Ui\Presets\React;
+use App\Http\Requests\AdditionalHours\CreateAdditionalHour;
 
 class AdditionalHourController extends Controller
 {
@@ -14,9 +15,11 @@ class AdditionalHourController extends Controller
     public function __construct(AdditionalHourService $additionalHourService)
     {
         $this->additionalHourService = $additionalHourService;
+        $this->middleware("permission:additionalHoursShow");
+        $this->middleware("permission:additionalHoursMange");
     }
 
-    public function create(Request $request)
+    public function create(CreateAdditionalHour $request)
     {
         $this->additionalHourService->createAdditionalHour($request->get("additionalHour"));
     }

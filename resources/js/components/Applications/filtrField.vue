@@ -1,8 +1,7 @@
 <template>
-  <v-col cols="12" sm="6" md="3">
+  <v-col style="display: inline-block" cols="12" sm="6" md="3">
     <v-text-field
       label="Nazwa użytkownika"
-      outlined
       v-model="name"
       @input="changed(name)"
     ></v-text-field>

@@ -11,6 +11,7 @@ import additionalHours from './modules/additionalHours'
 import applications from './modules/applications'
 import overtimes from "./modules/overtimes"
 import leaves from "./modules/leaves"
+import departments from "./modules/departments"
 
 Vue.use(Vuex)
 
@@ -26,6 +27,7 @@ export default new Vuex.Store({
         additionalHours,
         applications,
         overtimes,
-        leaves
+        leaves,
+        departments
     },
 })

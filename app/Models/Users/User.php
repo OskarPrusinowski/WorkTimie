@@ -3,6 +3,7 @@
 namespace App\Models\Users;
 
 use App\Models\AdditionalHours\AdditionalHour;
+use App\Models\Departments\Department;
 use App\Models\Groups\Group;
 use App\Models\Leaves\Leave;
 use App\Models\Overtimes\Overtime;
@@ -32,8 +33,11 @@ class User extends Authenticatable
         'password',
         'date_start_employment',
         'date_stop_employment',
+        'counter_holidays',
+        'current_counter_holidays',
         'group_id',
-        'role_id'
+        'role_id',
+        'department_id',
     ];
 
     /**
@@ -58,6 +62,11 @@ class User extends Authenticatable
     public function group()
     {
         return $this->belongsTo(Group::class);
+    }
+
+    public function department()
+    {
+        return $this->belongsTo(Department::class);
     }
 
     public function role()
@@ -93,5 +102,10 @@ class User extends Authenticatable
     public function scopeUserName($query, $userName)
     {
         return $query->where('name', 'like', "%" . $userName . "%")->orWhere('surname', 'like', "%" . $userName . "%");
+    }
+
+    public function scopeFiltrDepartment($query, $departmentId)
+    {
+        return $query->where('department_id', $departmentId);
     }
 }

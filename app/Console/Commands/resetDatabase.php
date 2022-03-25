@@ -7,6 +7,8 @@ use Database\Seeders\PermissionsSeeder;
 use Database\Seeders\RolesPermissionsSeeder;
 use Database\Seeders\RolesSeeder;
 use Database\Seeders\UsersSeeder;
+use Database\Seeders\ApplicationsCounterSeeder;
+use Database\Seeders\DepartmentsSeeder;
 use Illuminate\Console\Command;
 
 class resetDatabase extends Command
@@ -38,7 +40,9 @@ class resetDatabase extends Command
         $this->call(PermissionsSeeder::class);
         $this->call(RolesPermissionsSeeder::class);
         $this->call(GroupsSeeder::class);
+        $this->call(DepartmentsSeeder::class);
         $this->call(UsersSeeder::class);
+        $this->call(ApplicationsCounterSeeder::class);
         $this->call("workdays:create");
     }
 }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Holidays;
 use App\Http\Controllers\Controller;
 use App\Services\Holidays\HolidaysService;
 use Illuminate\Http\Request;
+use App\Http\Requests\Holidays\FiltrHolidays;
 
 class HolidaysController extends Controller
 {
@@ -16,7 +17,7 @@ class HolidaysController extends Controller
         $this->middleware("permission:holidaysManage");
     }
 
-    public function list(Request $request)
+    public function list(FiltrHolidays $request)
     {
         $holidays = $this->holidaysService->list($request->date);
         return response()->json(['holidays' => $holidays]);

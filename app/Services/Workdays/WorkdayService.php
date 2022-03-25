@@ -83,7 +83,11 @@ class WorkdayService
 
     public function getByUser($userId)
     {
-        return $this->workdayModel->with("workPeriods")->filtrByUser($userId)->today()->first();
+        $workday = $this->workdayModel->with("workPeriods")->filtrByUser($userId)->lastStarted()->first();
+        if (!$workday) {
+            $workday = $this->workdayModel->with("workPeriods")->filtrByUser($userId)->today()->first();
+        }
+        return $workday;
     }
 
     public function add($userId, $minutes, $type)

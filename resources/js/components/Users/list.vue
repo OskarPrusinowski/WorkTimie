@@ -1,6 +1,7 @@
 <template>
   <div v-if="permissions.usersShow">
     <filtr-field @changedName="getUsers()" />
+    <department-filtr @changedDepartment="getUsers()" />
     <create @added="addedUser" v-if="permissions.usersManage" />
     <v-simple-table v-if="permissions.usersShow">
       <thead>
@@ -10,8 +11,10 @@
           <th class="text-left">Nazwisko</th>
           <th class="text-left">Email</th>
           <th class="text-left">Data zatrudnienia</th>
+          <th class="text-left">Wolne w roku</th>
           <th class="text-left">Grupa</th>
-          <th class="text-left">Zwolnij</th>
+          <th class="text-left">Dział</th>
+          <th class="text-left">Zakończ współpracę</th>
           <th class="text-left">Usuń</th>
         </tr>
       </thead>
@@ -22,8 +25,13 @@
           <td class="text-left">{{ user.surname }}</td>
           <td class="text-left">{{ user.email }}</td>
           <td class="text-left">{{ user.date_start_employment }}</td>
+          <td class="text-left">{{ user.current_counter_holidays }}</td>
           <td class="text-left" v-if="user.group">
             {{ user.group.name }}
+          </td>
+          <td class="text-left" v-else></td>
+          <td class="text-left" v-if="user.department">
+            {{ user.department.name }}
           </td>
           <td class="text-left" v-else></td>
           <td class="text-left">
@@ -31,7 +39,7 @@
               v-if="permissions.usersManage"
               @click="fireUser(user)"
               :disabled="user.date_stop_employment"
-              >Zwolnij</v-btn
+              >Zakończ współpracę</v-btn
             >
           </td>
           <td class="text-left">
@@ -48,10 +56,13 @@
 import store from "../../store/index";
 import create from "./create.vue";
 import filtrField from "./filtrField";
+import departmentFiltr from "./departmentFiltr.vue";
+
 export default {
   components: {
     create,
     filtrField,
+    departmentFiltr,
   },
   computed: {
     users() {

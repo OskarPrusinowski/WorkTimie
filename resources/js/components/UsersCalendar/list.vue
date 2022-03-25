@@ -1,6 +1,8 @@
 <template>
-  <div>
+  <div v-if="permissions.usersShow">
     <filtr-field @changedName="getUsers()" />
+    <week-picker @changedDates="getUsers()" />
+    <v-divider />
     <v-simple-table v-if="users.length > 0">
       <thead>
         <tr>
@@ -41,24 +43,34 @@ import store from "../../store/index";
 import monthPicker from "./monthPicker.vue";
 import moment from "moment";
 import filtrField from "./filtrField.vue";
+import weekPicker from "./weekPicker.vue";
 
 export default {
   components: {
     monthPicker,
     filtrField,
+    weekPicker,
   },
   computed: {
     users() {
       return store.getters.getUsers;
     },
+    permissions() {
+      return store.getters.getUserPermissions;
+    },
   },
   methods: {
     getUsers() {
-      store.dispatch("getUsersByDateName", this);
+      console.log("fasfafa;;m");
+      store.dispatch("getUsersByDatesName", this);
     },
   },
   created() {
-    store.commit("setUsersDate", moment().format("YYYY-MM"));
+    store.commit(
+      "setUsersStart",
+      moment().subtract(7, "days").format("YYYY-MM-DD")
+    );
+    store.commit("setUsersStop", moment().format("YYYY-MM-DD"));
     store.commit("setUsersName", "");
     this.getUsers();
   },

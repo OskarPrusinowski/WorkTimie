@@ -29,7 +29,7 @@ class WorkdaysSeeder extends Seeder
         $usersId = DB::table('users')->get('id');
         $day = $this->weekMap[Carbon::now()->addHour()->dayOfWeek];
         $date = Carbon::now()->addHour();
-        DB::table('workdays')->where('id', '>', 0)->delete();
+        //DB::table('workdays')->where('id', '>', 0)->delete();
         $data = [];
         foreach ($usersId as $userId) {
             $data[] = ['day' => $day, 'date' => $date, 'user_id' => $userId->id];

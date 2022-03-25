@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->string("name");
             $table->integer("worktime")->nullable();
+            $table->boolean("can_make_holidays_up")->default(0);
             $table->softDeletes();
         });
     }

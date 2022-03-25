@@ -1,16 +1,14 @@
 <template>
-  <div>
-    <v-col class="ma-0 pb-0 pt-0" md="10">
-      <v-select
-        @change="changedStatus(status)"
-        :items="statuses"
-        item-text="name"
-        item-value="val"
-        label="Status"
-        v-model="status"
-      ></v-select>
-    </v-col>
-  </div>
+  <v-col style="display: inline-block" cols="12" sm="6" md="3">
+    <v-select
+      @change="changedStatus(status)"
+      :items="statuses"
+      item-text="name"
+      item-value="val"
+      label="Status"
+      v-model="status"
+    ></v-select>
+  </v-col>
 </template>
 <script>
 import store from "../../store/index";

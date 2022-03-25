@@ -21,6 +21,7 @@ class LeaveService
 
     public function create($newLeave)
     {
+        $newLeave['start'] = $newLeave['start'] ? $newLeave['start'] : $newLeave['end'];
         $this->leaveModel::create($newLeave);
     }
 }

@@ -9,10 +9,7 @@
         <div style="float: right">
           <another-users :userId="user.id" />
         </div>
-
-        <v-btn v-if="!workday.start" @click="startWork()">
-          Rozpocznij pracę</v-btn
-        >
+        <v-btn v-if="!workday.start" @click="startWork()"> Zacznij pracę</v-btn>
 
         <span v-else>
           <div class="pb-4">
@@ -200,7 +197,7 @@ export default {
       this.startPeriod(this.workday, 0);
     },
     async stopWork(workPeriods) {
-      store.dispatch("stopWorkday", this);
+      //store.dispatch("stopWorkday", this);
       if (workPeriods.length > 0) {
         this.stopPeriod(workPeriods[workPeriods.length - 1]);
       } else {
@@ -292,7 +289,8 @@ export default {
         this.group.worktime * 60 -
         this.workday.worktime +
         this.additionalMinutes;
-      if (this.additionalTime > 20) {
+      console.log(this.additionalTime);
+      /*if (this.additionalTime > 20) {
         this.dialog = true;
         store.commit("setAdditionalHour", {});
         store.commit(
@@ -300,7 +298,7 @@ export default {
           store.getters.getActualUserGroupId
         );
         store.commit("setAdditionalHourMinutes", this.additionalTime);
-      }
+      }*/
     },
   },
   async created() {

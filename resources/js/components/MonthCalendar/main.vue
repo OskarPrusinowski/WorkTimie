@@ -1,6 +1,7 @@
 <template>
   <div v-if="permissions.workdaysShow">
     <v-divider></v-divider>
+    <select-search @changedUserId="getWorkDays()" />
     <v-simple-table id="table">
       <thead>
         <tr>
@@ -57,10 +58,11 @@ import html2canvas from "html2canvas";
 import store from "../../store/index";
 import moment from "moment";
 import monthPicker from "./monthPicker.vue";
-
+import selectSearch from "./selectSearch.vue";
 export default {
   components: {
     monthPicker,
+    selectSearch,
   },
   data() {
     return {

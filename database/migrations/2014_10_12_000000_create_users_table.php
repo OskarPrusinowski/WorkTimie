@@ -20,12 +20,15 @@ return new class extends Migration
             $table->string('email')->nullable();
             $table->date('date_start_employment')->nullable();
             $table->date('date_stop_employment')->nullable();
+            $table->integer('counter_holidays')->nullable();
+            $table->integer('current_counter_holidays')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password')->nullable();
             $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();
             $table->bigInteger("group_id")->nullable()->unsigned();
+            $table->bigInteger("department_id")->nullable()->unsigned();
         });
     }
 
