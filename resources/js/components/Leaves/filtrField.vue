@@ -1,7 +1,7 @@
 <template>
   <v-col cols="12" sm="6" md="3" style="display: inline-block">
     <v-text-field
-      label="Nazwa użytkownika"
+      label="Pracownik"
       v-model="name"
       @input="changed(name)"
     ></v-text-field>

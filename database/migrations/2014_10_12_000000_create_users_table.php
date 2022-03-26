@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->string('name')->nullable();
             $table->string('surname')->nullable();
-            $table->string('email')->nullable();
+            $table->string('email')->unique();
             $table->date('date_start_employment')->nullable();
             $table->date('date_stop_employment')->nullable();
             $table->integer('counter_holidays')->nullable();

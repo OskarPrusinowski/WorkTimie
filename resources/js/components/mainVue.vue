@@ -60,7 +60,7 @@
               <v-badge
                 color="red"
                 :content="applicationCounter"
-                v-if="applicationCounter"
+                v-if="applicationCounter && permissions.applicationsAdminManage"
                 >Wnioski</v-badge
               >
               <span v-else> Wnioski</span>

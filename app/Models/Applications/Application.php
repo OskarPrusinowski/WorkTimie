@@ -40,4 +40,9 @@ class Application extends Model
     {
         return $query->where('status', 'like', "%" . $status . "%");
     }
+
+    public function scopeUserId($query, $userId)
+    {
+        return $query->where("user_id", $userId);
+    }
 }

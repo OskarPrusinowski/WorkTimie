@@ -2,8 +2,14 @@
   <div v-if="permissions.applicationsShow">
     <create-comment :dialog="dialog" @closed="update()" />
     <div>
-      <status-filtr @changedStatus="getApplications()" />
-      <filtr-field @changedName="getApplications()"></filtr-field>
+      <status-filtr
+        v-if="permissions.applicationsAdminManage"
+        @changedStatus="getApplications()"
+      />
+      <filtr-field
+        v-if="permissions.applicationsAdminManage"
+        @changedName="getApplications()"
+      ></filtr-field>
       <div></div>
     </div>
     <v-simple-table>
@@ -11,7 +17,9 @@
         <tr>
           <th class="text-left">Lp</th>
           <th class="text-left">Numer wniosku</th>
-          <th class="text-left">Pracownik</th>
+          <th class="text-left" v-if="permissions.applicationsAdminManage">
+            Pracownik
+          </th>
           <th class="text-left">Typ</th>
           <th class="text-left">Data wysłania</th>
           <th class="text-left">Termin</th>
@@ -26,7 +34,7 @@
         <tr v-for="(application, index) in applications" :key="application.id">
           <td class="text-left">{{ index + 1 }}</td>
           <td class="text-left">{{ application.number }}</td>
-          <td class="text-left">
+          <td class="text-left" v-if="permissions.applicationsAdminManage">
             {{ application.user.name }} {{ application.user.surname }}
           </td>
           <td class="text-left">{{ application.type }}</td>
@@ -55,9 +63,8 @@
               class="pa-4 ma-1 rounded-circle d-inline-block red"
             ></div>
           </td>
-          <td class="text-left" v-else-if="true">
+          <td class="text-left" v-else-if="permissions.applicationsAdminManage">
             <v-btn
-              v-if="permissions.overtimesManage"
               @click="accept(application)"
               :disabled="application.acceptation_date"
             >
@@ -65,7 +72,6 @@
             </v-btn>
 
             <v-btn
-              v-if="permissions.overtimesManage"
               @click="reject(application.id)"
               :disabled="application.acceptation_date"
             >

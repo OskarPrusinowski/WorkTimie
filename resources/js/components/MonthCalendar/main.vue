@@ -1,7 +1,6 @@
 <template>
   <div v-if="permissions.workdaysShow">
     <v-divider></v-divider>
-    <select-search @changedUserId="getWorkDays()" />
     <v-simple-table id="table">
       <thead>
         <tr>
@@ -15,7 +14,11 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(workday, index) in workdays" :key="workday.id">
+        <tr
+          v-for="(workday, index) in workdays"
+          :key="workday.id"
+          v-if="workday.start"
+        >
           <td class="text-left">{{ index + 1 }}</td>
           <td class="text-left">{{ workday.day }}</td>
           <td class="text-left">

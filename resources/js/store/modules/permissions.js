@@ -6,6 +6,7 @@ const state = {
     usersManage: false,
     holidaysShow: false,
     holidaysManage: false,
+    applicationsAdminManage: false,
     overtimesShow: false,
     overtimesManage: false,
     additionalHoursShow: false,
@@ -27,7 +28,8 @@ const state = {
 
 const getters = {
     getUserPermissions: state => state,
-    getPermissionsUserId: state => state.userId
+    getPermissionsUserId: state => state.userId,
+    getApplicationsAdminManage: state => state.applicationsAdminManage
 };
 
 const mutations = {
@@ -45,6 +47,9 @@ const mutations = {
     },
     setHolidaysManage(state, data) {
         state.holidaysManage = data;
+    },
+    setApplicationsAdminManage(state, data) {
+        state.applicationsAdminManage = data;
     },
     setOvertimesShow(state, data) {
         state.overtimesShow = data;
@@ -168,6 +173,9 @@ const actions = {
                     break;
                 case 'departmentsManage':
                     state.commit("setDepartmentsManage", true);
+                    break;
+                case 'applicationsAdminManage':
+                    state.commit("setApplicationsAdminManage", true);
                     break;
             }
         }

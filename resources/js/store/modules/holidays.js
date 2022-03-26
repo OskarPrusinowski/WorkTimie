@@ -53,8 +53,8 @@ const actions = {
                 state.commit("setHolidays", response.data.holidays);
             })
     },
-    createHoliday(state, VueComponent) {
-        VueComponent.$http.post(urlHolidays + "create", { holiday: state.getters.getHoliday })
+    async createHoliday(state, VueComponent) {
+        await VueComponent.$http.post(urlHolidays + "create", { holiday: state.getters.getHoliday })
             .then(response => {
                 console.log(response);
             })

@@ -16,8 +16,8 @@ class PermissionsSeeder extends Seeder
      */
 
     protected $permissions = [
-        'usersShow', 'usersManage', 'holidaysShow', 'holidaysManage', 'overtimesShow', 'overtimesManage', 'additionalHoursShow',
-        'additionalHoursManage', 'leavesManage', 'leavesShow', 'applicationsShow', 'applicationsManage',   'workdaysShow',
+        'usersShow', 'usersManage', 'holidaysShow', 'holidaysManage', 'applicationsAdminManage','overtimesManage','additionalHoursManage', 'leavesManage',  'overtimesShow',  'additionalHoursShow',
+        'leavesShow', 'applicationsShow', 'applicationsManage',   'workdaysShow',
         'workdaysManage', 'workPeriodsShow', 'workPeriodsManage', 'groupsShow', 'groupsManage', 'departmentsShow', 'departmentsManage'
     ];
 

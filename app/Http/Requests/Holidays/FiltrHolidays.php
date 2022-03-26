@@ -24,7 +24,7 @@ class FiltrHolidays extends FormRequest
     public function rules()
     {
         return [
-            'date'=>'required|status'
+            'date' => 'required'
         ];
     }
 }

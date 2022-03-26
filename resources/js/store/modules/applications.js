@@ -124,8 +124,8 @@ const actions = {
                 console.log(response.data.applications)
             })
     },
-    createApplication(state, VueComponent) {
-        VueComponent.$http.post(urlApplication + "create", { application: state.getters.getApplication })
+    async createApplication(state, VueComponent) {
+        await VueComponent.$http.post(urlApplication + "create", { application: state.getters.getApplication })
             .then(response => {
                 console.log(response);
             })

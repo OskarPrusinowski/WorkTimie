@@ -25,12 +25,12 @@ class LeavesService
     {
         $userName = $userName ? $userName : "";
         if ($departmentId == 0) {
-            return $this->leaveModel->month($date)->with("user.department")
+            return $this->leaveModel->with("user.department")
                 ->whereHas('user', function (Builder $query) use ($userName) {
                     $query->userName($userName);
                 })->get()->groupBy('user_id');
         }
-        return $this->leaveModel->month($date)->with("user.department")
+        return $this->leaveModel->with("user.department")
             ->whereHas('user', function (Builder $query) use ($userName, $departmentId) {
                 $query->userName($userName)->filtrDepartment($departmentId);
             })->get()->groupBy('user_id');
@@ -55,12 +55,14 @@ class LeavesService
                     $userDates[] = 0;
                 }
             }
-            $dateStart = (new Carbon($leave[0]->start));
-            while ($dateStart <= $leave[0]->end) {
+            if ($leave[0]->start) {
+                $dateStart = (new Carbon($leave[0]->start));
+                while ($dateStart <= $leave[0]->end) {
+                    $userDates[$dateStart->day + 1]++;
+                    $dateStart->addDay();
+                }
                 $userDates[$dateStart->day + 1]++;
-                $dateStart->addDay();
             }
-            $userDates[$dateStart->day + 1]++;
         }
         $specialList[] = $userDates;
         return $specialList;

@@ -2,7 +2,7 @@
   <v-card>
     <v-layout column
       ><v-flex>
-        <v-simple-table>
+        <v-simple-table v-if="workdays.length != 0">
           <thead>
             <tr>
               <th>Status</th>
@@ -12,10 +12,9 @@
           </thead>
           <tbody>
             <tr
-              v-for="workday in workdays.filter(
-                (workday) => !workday.user.date_stop_employment
-              )"
+              v-for="workday in workdays"
               :key="workday.id"
+              v-if="workday.user && !workday.user.date_stop_employment"
             >
               <td v-if="workday.holiday">
                 <div class="pa-4 ma-1 rounded-circle d-inline-block grey"></div>

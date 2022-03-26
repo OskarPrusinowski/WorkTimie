@@ -15,7 +15,7 @@ class RolesPermissionsSeeder extends Seeder
      */
     public function run()
     {
-        $rolesPermissions = [[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20], [6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]];
+        $rolesPermissions = [[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21], [9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]];
         $roleId = 1;
         $data = [];
         foreach ($rolesPermissions as $rolePermission) {

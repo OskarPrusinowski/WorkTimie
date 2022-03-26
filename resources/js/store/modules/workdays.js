@@ -120,6 +120,7 @@ const actions = {
         VueComponent.$http.get(urlWorkday + "listAnother/" + userId)
             .then(response => {
                 state.commit("setWorkdays", response.data.workdays);
+                console.log(state.getters.getWorkdays)
             })
     }
 }

@@ -197,7 +197,7 @@ export default {
       this.startPeriod(this.workday, 0);
     },
     async stopWork(workPeriods) {
-      //store.dispatch("stopWorkday", this);
+      store.dispatch("stopWorkday", this);
       if (workPeriods.length > 0) {
         this.stopPeriod(workPeriods[workPeriods.length - 1]);
       } else {
@@ -285,12 +285,13 @@ export default {
       await store.dispatch("getOvertimesToday", this);
     },
     createAdditionalHour() {
+      var worktime = moment.utc(moment().diff(moment(this.workday.start)));
       this.additionalTime =
         this.group.worktime * 60 -
-        this.workday.worktime +
+        worktime.hour() * 60 +
+        worktime.minute() +
         this.additionalMinutes;
-      console.log(this.additionalTime);
-      /*if (this.additionalTime > 20) {
+      if (this.additionalTime > 20) {
         this.dialog = true;
         store.commit("setAdditionalHour", {});
         store.commit(
@@ -298,7 +299,7 @@ export default {
           store.getters.getActualUserGroupId
         );
         store.commit("setAdditionalHourMinutes", this.additionalTime);
-      }*/
+      }
     },
   },
   async created() {

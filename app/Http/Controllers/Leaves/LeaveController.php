@@ -15,7 +15,7 @@ class LeaveController extends Controller
     {
         $this->leaveService = $leaveService;
         $this->middleware("permission:leavesShow");
-        $this->middleware("permission:leavesMange");
+        $this->middleware("permission:leavesManage");
     }
 
     public function create(CreateLeave $request)

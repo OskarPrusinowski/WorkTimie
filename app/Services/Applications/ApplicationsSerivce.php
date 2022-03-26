@@ -14,7 +14,12 @@ class ApplicationsSerivce
         $this->applicationModel = $applicationModel;
     }
 
-    public function list($month, $status, $userName)
+    public function list($month, $status, $userId)
+    {
+        $status = $status ? $status : "";
+        return $this->applicationModel->with("user")->month($month)->status($status)->userId($userId)->get();
+    }
+    public function listWithUser($month, $status, $userName)
     {
         $userName = $userName ? $userName : "";
         $status = $status ? $status : "";

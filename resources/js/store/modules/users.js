@@ -130,9 +130,8 @@ const actions = {
                 console.log(response);
             })
     },
-    createUser(state, VueComponent) {
-        console.log(state.getters.getUser);
-        VueComponent.$http.post(urlUser + "create", { user: state.getters.getUser })
+    async createUser(state, VueComponent) {
+        await VueComponent.$http.post(urlUser + "create", { user: state.getters.getUser })
             .then(response => {
                 console.log(response);
             })

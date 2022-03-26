@@ -25,7 +25,7 @@ class ConsiderApplication extends FormRequest
     {
         return [
             'acceptationId' => 'required|integer',
-            'status' => 'required|boolean',
+            'status' => 'boolean',
         ];
     }
 }

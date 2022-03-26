@@ -16,10 +16,13 @@
 
         <v-card>
           <v-card-title class="text-h5 grey lighten-2">
-            Stwórz użytkownika
+            Stwórz pracownika
           </v-card-title>
           <v-divider></v-divider>
-
+          <v-snackbar v-model="snackbar" :timeout="3000" top color="error">
+            <span>{{ valError }}</span>
+            <v-divider></v-divider>
+          </v-snackbar>
           <v-col class="ma-0 pb-0 pt-0" md="10">
             <v-text-field
               label="Imie"
@@ -128,7 +131,12 @@
               Anuluj
             </v-btn>
             <v-spacer></v-spacer>
-            <v-btn depressed color="primary" @click="createUser(user)">
+            <v-btn
+              depressed
+              color="primary"
+              @click="createUser(user)"
+              :loading="loading"
+            >
               Stwórz użytkownika
             </v-btn>
           </v-card-actions>
@@ -145,6 +153,9 @@ export default {
       dialog: false,
       menu: false,
       show1: true,
+      snackbar: false,
+      loading: false,
+      valError: "",
       picker: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
         .toISOString()
         .substr(0, 10),
@@ -181,13 +192,23 @@ export default {
     },
   },
   methods: {
-    createUser(user) {
+    async createUser(user) {
+      this.loading = true;
       if (this.$refs.form.validate()) {
         store.commit("setUser", user);
-        store.dispatch("createUser", this);
-        this.dialog = false;
-        this.$emit("added");
+        await store.dispatch("createUser", this).catch((error) => {
+          this.isE = true;
+          this.valError = error.body.errors[Object.keys(error.body.errors)][0];
+        });
+        if (this.isE) {
+          this.snackbar = true;
+        } else {
+          this.dialog = false;
+          this.$emit("added");
+        }
+        this.isE = false;
       }
+      this.loading = false;
     },
     getGroups() {
       store.dispatch("getGroups", this);

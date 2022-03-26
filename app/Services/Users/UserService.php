@@ -26,7 +26,7 @@ class UserService
         $user['date_start_employment'] = Carbon::create($user['date_start_employment']);
         $user['password'] = Hash::make($user['password']);
         $user['role_id'] = 2;
-        $this->userModel::create($user);
+        return $this->userModel::create($user);
     }
 
     public function deleteUser($id)

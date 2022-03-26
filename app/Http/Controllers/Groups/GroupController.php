@@ -14,7 +14,7 @@ class GroupController extends Controller
     {
         $this->groupService = $groupService;
         $this->middleware("permission:groupsShow");
-        $this->middleware("permission:groupsMange");
+        $this->middleware("permission:groupsManage");
     }
 
     public function show($id)

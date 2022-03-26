@@ -54,9 +54,8 @@ const actions = {
                 console.log(response.data.overtimes)
             })
     },
-    createOvertime(state, VueComponent) {
-        console.log(state.getters.getOvertime)
-        VueComponent.$http.post(urlOvertime + "create", { overtime: state.getters.getOvertime })
+    async createOvertime(state, VueComponent) {
+        await VueComponent.$http.post(urlOvertime + "create", { overtime: state.getters.getOvertime })
             .then(response => {
                 console.log(response);
             })
