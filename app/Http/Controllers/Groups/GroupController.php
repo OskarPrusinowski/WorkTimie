@@ -19,7 +19,7 @@ class GroupController extends Controller
 
     public function show($id)
     {
-        $group = $this->groupService->getGroup($id);
+        $group = $this->groupService->get($id);
         return response()->json(['group' => $group]);
     }
 }

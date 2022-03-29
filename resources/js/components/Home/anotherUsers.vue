@@ -21,12 +21,12 @@
               </td>
               <td v-else-if="workday.stop">
                 <div
-                  class="pa-4 ma-1 rounded-circle d-inline-block yellow"
+                  class="pa-4 ma-1 rounded-circle d-inline-block green"
                 ></div>
               </td>
               <td v-else-if="workday.start">
                 <div
-                  class="pa-4 ma-1 rounded-circle d-inline-block green"
+                  class="pa-4 ma-1 rounded-circle d-inline-block yellow"
                 ></div>
               </td>
               <td v-else>

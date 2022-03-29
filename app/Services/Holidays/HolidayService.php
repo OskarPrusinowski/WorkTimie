@@ -24,13 +24,13 @@ class HolidayService
         $this->holidayModel = $holidayModel;
     }
 
-    public function createHoliday($holiday)
+    public function create($holiday)
     {
         $holiday['day'] = $this->weekMap[(new Carbon($holiday['date']))->dayOfWeek];
         $this->holidayModel::create($holiday);
     }
 
-    public function deleteHoliday($id)
+    public function delete($id)
     {
         $this->holidayModel->destroy($id);
     }

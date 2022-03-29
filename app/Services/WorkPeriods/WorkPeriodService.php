@@ -14,36 +14,36 @@ class WorkPeriodService
         $this->workPeriodModel = $workPeriodModel;
     }
 
-    public function getWorkPeriod($id)
+    public function get($id)
     {
         return $this->workPeriodModel->find($id);
     }
 
-    public function createWorkPeriod($workPeriod)
+    public function create($workPeriod)
     {
         $this->workPeriodModel->create($workPeriod);
     }
 
     public function start($workPeriod)
     {
-        $workPeriod['start'] = Carbon::now()->addHour();
-        $this->createWorkPeriod($workPeriod);
+        $workPeriod['start'] = Carbon::now()->addHours(2);
+        $this->create($workPeriod);
     }
 
-    public function updateWorkPeriod($newWorkPeriod, $workPeriodId)
+    public function update($newWorkPeriod, $workPeriodId)
     {
-        $workPeriod = $this->getWorkPeriod($workPeriodId);
+        $workPeriod = $this->get($workPeriodId);
         $workPeriod->update($newWorkPeriod);
     }
 
     public function stop($newWorkPeriod, $workdayId)
     {
-        $newWorkPeriod['stop'] = Carbon::now()->addHour();
-        $newWorkPeriod['minutes'] = Carbon::create($newWorkPeriod['start'])->diffInMinutes(Carbon::now()->addHour());
-        $this->updateWorkPeriod($newWorkPeriod, $workdayId);
+        $newWorkPeriod['stop'] = Carbon::now()->addHours(2);
+        $newWorkPeriod['minutes'] = Carbon::create($newWorkPeriod['start'])->diffInMinutes(Carbon::now()->addHours(2));
+        $this->update($newWorkPeriod, $workdayId);
     }
 
-    public function getLastWorkPeriod($workdayId)
+    public function getLast($workdayId)
     {
         return $this->workdayModel->filtrByWorkday($workdayId)->orderBy('day', 'desc')->limit(1)->get();
     }

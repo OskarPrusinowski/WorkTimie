@@ -110,6 +110,7 @@
               item-value="id"
               outlined
               v-model="user.group_id"
+              :rules="[rules.required]"
             ></v-select>
           </v-col>
           <v-col class="ma-0 pb-0 pt-0" md="10">
@@ -121,6 +122,7 @@
               item-value="id"
               outlined
               v-model="user.department_id"
+              :rules="[rules.required]"
             ></v-select>
           </v-col>
 
@@ -193,8 +195,8 @@ export default {
   },
   methods: {
     async createUser(user) {
-      this.loading = true;
       if (this.$refs.form.validate()) {
+        this.loading = true;
         store.commit("setUser", user);
         await store.dispatch("createUser", this).catch((error) => {
           this.isE = true;

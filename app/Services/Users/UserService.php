@@ -15,28 +15,32 @@ class UserService
         $this->userModel = $userModel;
     }
 
-    public function getUser($id)
+    public function get($id)
     {
         return $this->userModel->with("group")->find($id);
     }
 
-    public function createUser($user)
+    public function create($user)
     {
         $user['current_counter_holidays'] = $user['counter_holidays'];
         $user['date_start_employment'] = Carbon::create($user['date_start_employment']);
         $user['password'] = Hash::make($user['password']);
-        $user['role_id'] = 2;
+        if ($user['group_id'] == 3) {
+            $user['role_id'] = 3;
+        } else {
+            $user['role_id'] = 2;
+        }
         return $this->userModel::create($user);
     }
 
-    public function deleteUser($id)
+    public function delete($id)
     {
         $this->userModel->destroy($id);
     }
 
-    public function updateUser($newUser, $id)
+    public function update($newUser, $id)
     {
-        $user = $this->getUser($id);
+        $user = $this->get($id);
         if (array_key_exists('password', $newUser)) {
             $newUser = Hash::make($newUser['password']);
         }

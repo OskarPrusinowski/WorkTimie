@@ -6,4 +6,4 @@ use Illuminate\Support\Facades\Route;
 
 Route::post('/create', [AdditionalHourController::class, 'create']);
 Route::get('/show/{id}', [AdditionalHourController::class, 'show']);
-Route::get('/listByUser/{userid}', [AdditionalHoursController::class, 'listByUser']);
+Route::get('/listToday/{userid}', [AdditionalHoursController::class, 'listToday']);

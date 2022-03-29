@@ -22,14 +22,14 @@ class UserController extends Controller
 
     public function show($id)
     {
-        $user = $this->userService->getUser($id);
+        $user = $this->userService->get($id);
         return response()->json(['user' => $user]);
     }
 
     public function create(CreateUser $response)
     {
-        $user = $this->userService->createUser($response->get('user'));
-        event(new UserCreatedEvent(1));
+        $user = $this->userService->create($response->get('user'));
+        event(new UserCreatedEvent($user->id));
     }
 
     public function update(UpdateUser $request)
@@ -40,6 +40,6 @@ class UserController extends Controller
 
     public function destroy($id)
     {
-        $this->userService->deleteUser($id);
+        $this->userService->delete($id);
     }
 }

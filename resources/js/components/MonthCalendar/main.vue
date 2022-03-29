@@ -1,5 +1,9 @@
 <template>
   <div v-if="permissions.workdaysShow">
+    <select-search
+      v-if="permissions.usersShow"
+      @changedUserId="getWorkDays()"
+    />
     <v-divider></v-divider>
     <v-simple-table id="table">
       <thead>
@@ -17,7 +21,7 @@
         <tr
           v-for="(workday, index) in workdays"
           :key="workday.id"
-          v-if="workday.start"
+          v-if="workday.stop"
         >
           <td class="text-left">{{ index + 1 }}</td>
           <td class="text-left">{{ workday.day }}</td>
@@ -27,7 +31,7 @@
           <td class="text-left" v-if="workday.worktime">
             {{ workday.worktime }} (minut)
           </td>
-          <td class="text-left" v-else>
+          <td class="text-left">
             {{
               moment
                 .utc(
@@ -41,9 +45,36 @@
           <td class="text-left" v-if="workday.stop">
             {{ moment(workday.stop).format("h:mm") }}
           </td>
-          <td class="text-left" v-else></td>
-          <td class="text-left">{{ workday.breaktime }}</td>
-          <td class="text-left">{{ workday.overtime }}</td>
+          <td class="text-left"></td>
+          <td class="text-left">
+            {{ workday.breaktime }}
+          </td>
+          <td class="text-left">
+            {{ workday.overtime }}
+          </td>
+        </tr>
+        <tr v-else-if="workday.holiday">
+          <td class="text-left">{{ index + 1 }}</td>
+          <td class="text-left">{{ workday.day }}</td>
+          <td class="text-center" colspan="5">
+            {{ workday.holiday }}
+          </td>
+        </tr>
+        <tr v-else-if="workday.start">
+          <td class="text-left">{{ index + 1 }}</td>
+          <td class="text-left">{{ workday.day }}</td>
+          <td class="text-left">
+            {{ moment(workday.start).format("h:mm") }}
+          </td>
+          <td colspan="3"></td>
+          <td class="text-center">
+            {{ workday.overtime }}
+          </td>
+        </tr>
+        <tr v-else>
+          <td class="text-left">{{ index + 1 }}</td>
+          <td class="text-left">{{ workday.day }}</td>
+          <td class="text-center" colspan="5">Nieobecność w pracy</td>
         </tr>
       </tbody>
     </v-simple-table>

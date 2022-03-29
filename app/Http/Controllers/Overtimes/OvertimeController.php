@@ -15,7 +15,7 @@ class OvertimeController extends Controller
     {
         $this->overtimeService = $overtimeService;
         $this->middleware("permission:overtimesShow");
-        $this->middleware("permission:overtimesMange");
+        $this->middleware("permission:overtimesManage");
     }
 
     public function create(CreateOvertime $request)

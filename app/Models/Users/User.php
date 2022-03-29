@@ -16,6 +16,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class User extends Authenticatable
 {
@@ -99,9 +100,9 @@ class User extends Authenticatable
         return $query->where("role_id", 1);
     }
 
-    public function scopeUserName($query, $userName)
+    public function scopeUserName($query, $name)
     {
-        return $query->where('name', 'like', "%" . $userName . "%")->orWhere('surname', 'like', "%" . $userName . "%");
+        return $query->where(DB::raw("concat(name,' ',surname)"), 'like', "%" . $name . "%");
     }
 
     public function scopeFiltrDepartment($query, $departmentId)

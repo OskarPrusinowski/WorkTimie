@@ -17,7 +17,7 @@ class PermissionsController extends Controller
 
     public function getPermissions($id)
     {
-        $permissions = $this->userService->getUser($id)->role->permissions;
+        $permissions = $this->userService->get($id)->role->permissions;
         return response()->json(['permissions' => $permissions]);
     }
 }

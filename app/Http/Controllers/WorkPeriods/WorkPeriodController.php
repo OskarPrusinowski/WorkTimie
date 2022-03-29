@@ -28,9 +28,9 @@ class WorkPeriodController extends Controller
         $this->workPeriodService->stop($request->get("workPeriod"), $workPeriodId);
     }
 
-    public function getLastWorkPeriod($workdayId)
+    public function getLast($workdayId)
     {
-        $workday = $this->workPeriodService->getLastWorkPeriod($workdayId);
+        $workday = $this->workPeriodService->getLast($workdayId);
         return response()->json(['workday' => $workday]);
     }
 }

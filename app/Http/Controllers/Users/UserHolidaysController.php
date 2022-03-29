@@ -14,7 +14,7 @@ class UserHolidaysController extends Controller
     {
         $this->userHolidaysService = $userHolidaysService;
         $this->middleware("permission:holidaysShow");
-        $this->middleware("permission:holidaysMange");
+        $this->middleware("permission:holidaysManage");
     }
 
     public function updateHolidaysCounter($userId)

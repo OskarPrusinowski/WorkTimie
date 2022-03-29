@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use Database\Seeders\WorkdaysSeeder;
+use Database\Seeders\LeavesSeeder;
 use Illuminate\Console\Command;
 
 class DailyWorkdays extends Command
@@ -29,5 +30,6 @@ class DailyWorkdays extends Command
     public function handle()
     {
         $this->call(WorkdaysSeeder::class);
+        $this->call(LeavesSeeder::class);
     }
 }

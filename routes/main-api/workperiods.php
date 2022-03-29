@@ -6,4 +6,4 @@ use App\Http\Controllers\WorkPeriods\WorkPeriodController;
 
 Route::post('/start', [WorkPeriodController::class, 'start']);
 Route::put('/stop/{workdayId}', [WorkPeriodController::class, 'stop']);
-Route::get('/getLastWorkPeriod/{workdayId}', [WorkPeriodController::class, 'getLastWorkPeriod']);
+Route::get('/getLast/{workdayId}', [WorkPeriodController::class, 'get']);

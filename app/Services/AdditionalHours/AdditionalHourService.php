@@ -14,17 +14,17 @@ class AdditionalHourService
         $this->additionalHourModel = $additionalHourModel;
     }
 
-    public function createAdditionalHour($additionalHour)
+    public function create($additionalHour)
     {
         $this->additionalHourModel::create($additionalHour);
     }
 
-    public function getAdditionalHour($id)
+    public function get($id)
     {
         return $this->additionalHourModel->find($id);
     }
 
-    public function getAdditionalHourByUser($userId)
+    public function getByUser($userId)
     {
         return $this->additionalHourModel->byUser($userId)->today()->first();
     }

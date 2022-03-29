@@ -20,6 +20,6 @@ class WorkdaysService
 
     public function listAnother($userId)
     {
-        return $this->workdayModel->with("user")->notUser(0)->today()->get();
+        return $this->workdayModel->with("user")->notUser($userId)->today()->get();
     }
 }

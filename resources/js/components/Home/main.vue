@@ -9,7 +9,13 @@
         <div style="float: right">
           <another-users :userId="user.id" />
         </div>
-        <v-btn v-if="!workday.start" @click="startWork()"> Zacznij pracę</v-btn>
+        <v-btn
+          v-if="!workday.start"
+          @click="startWork()"
+          :disabled="workday.holiday"
+        >
+          Zacznij pracę</v-btn
+        >
 
         <span v-else>
           <div class="pb-4">
@@ -17,7 +23,7 @@
             >{{ moment(workday.start).format("H:mm") }}
           </div>
           <v-btn
-            :disabled="workday.stop"
+            :disabled="workday.stop || !isBreak"
             @click="stopWork(workday.work_periods)"
           >
             Zakończ pracę</v-btn
@@ -42,7 +48,7 @@
                   .format("H:mm:ss")
               }}
             </div>
-            <div class="additionalHour">
+            <div class="additionalHour" v-if="permissions.additionalHoursShow">
               <div v-if="workday.additional_hours > 0">
                 <strong> Musisz wypracować dodatkowo: </strong>
                 {{ Math.floor(workday.additional_hours / 60) }}
@@ -58,23 +64,38 @@
                 <strong> minut</strong>
               </div>
             </div>
-            <div v-if="workday.overtime > 0" class="overtimes">
+            <div
+              v-if="workday.overtime > 0 && permissions.overtimesShow"
+              class="overtimes"
+            >
               <div>
                 <strong>Zatwierdzone nadgodziny: </strong>
                 {{ workday.overtime / 60 }}
               </div>
             </div>
-            <div style="display: inline-block" class="addApplication ma-3">
-              <create-application :userId="user.id" :moment="moment" />
+            <div
+              style="display: inline-block"
+              class="addApplication ma-3"
+              v-if="permissions.applicationsShow"
+            >
+              <create-application
+                :userId="user.id"
+                :moment="moment"
+                v-if="permissions.overtimesShow"
+              />
             </div>
             <div></div>
             <div
               style="display: inline-block"
               class="addAdditionalHourApplication ma-3"
+              v-if="permissions.additionalHoursShow"
             >
               <create-additional-hour-application :userId="user.id" />
             </div>
-            <div class="endOfTheWork">
+            <div
+              class="endOfTheWork"
+              v-if="isBreak && permissions.overtimesShow"
+            >
               <strong>Szacowany czas zakończenia pracy: </strong>
               {{
                 moment(workday.start)
@@ -203,7 +224,11 @@ export default {
       } else {
         await this.getActualWorkday();
       }
-      this.createAdditionalHour();
+      if (this.permissions.overtimesShow) {
+        this.createAdditionalHour();
+      } else {
+        this.getActualWorkday();
+      }
     },
     async getActualWorkday() {
       await store.dispatch("getWorkday", this);
@@ -285,12 +310,16 @@ export default {
       await store.dispatch("getOvertimesToday", this);
     },
     createAdditionalHour() {
-      var worktime = moment.utc(moment().diff(moment(this.workday.start)));
+      var timeLeft = moment.utc(
+        moment(this.workday.start)
+          .add(this.group.worktime, "hours")
+          .add(this.workday.breaktime, "minutes")
+          .add(this.workday.additional_hours, "minutes")
+          .add(this.workday.overtime, "minutes")
+          .diff(moment())
+      );
       this.additionalTime =
-        this.group.worktime * 60 -
-        worktime.hour() * 60 +
-        worktime.minute() +
-        this.additionalMinutes;
+        parseInt(timeLeft.format("mm")) + parseInt(timeLeft.format("HH")) * 60;
       if (this.additionalTime > 20) {
         this.dialog = true;
         store.commit("setAdditionalHour", {});
@@ -299,6 +328,8 @@ export default {
           store.getters.getActualUserGroupId
         );
         store.commit("setAdditionalHourMinutes", this.additionalTime);
+      } else {
+        this.getActualWorkday();
       }
     },
   },

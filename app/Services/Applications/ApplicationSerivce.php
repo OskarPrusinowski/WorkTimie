@@ -37,21 +37,21 @@ class ApplicationSerivce
         $this->sendNotification($application);
     }
 
-    public function show($id)
+    public function get($id)
     {
         return $this->applicationModel->find($id);
     }
 
     public function update($id, $newApplication)
     {
-        $application = $this->show($id);
+        $application = $this->get($id);
         $application->update($newApplication);
     }
 
     public function consider($id, $acceptationId, $accepted, $acceptationComment)
     {
-        $user = $this->userService->getUser($acceptationId);
-        $application = $this->show($id);
+        $user = $this->userService->get($acceptationId);
+        $application = $this->get($id);
         $application->acceptation_comment = $acceptationComment;
         $application->acceptation_Date = new Carbon();
         $application->status = $accepted ? "Zaakceptowany" : "Odrzucony";
@@ -63,7 +63,7 @@ class ApplicationSerivce
     public function sendNotification($application)
     {
         $admins = $this->usersService->listAdmin();
-        $user = $this->userService->getUser($application['user_id']);
+        $user = $this->userService->get($application['user_id']);
         foreach ($admins as $admin) {
 
             Mail::to($admin->email)->send(new ApplicationMail($application, $user));

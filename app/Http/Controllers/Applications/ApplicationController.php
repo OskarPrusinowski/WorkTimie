@@ -21,7 +21,7 @@ class ApplicationController extends Controller
 
     public function show($id)
     {
-        $application = $this->applicationSerivce->show($id);
+        $application = $this->applicationSerivce->get($id);
         return response()->json(['application' => $application]);
     }
 

@@ -13,7 +13,7 @@ class GroupService
         $this->groupModel = $groupModel;
     }
 
-    public function getGroup($id)
+    public function get($id)
     {
         return $this->groupModel->find($id);
     }

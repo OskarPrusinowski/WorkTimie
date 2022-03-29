@@ -40,7 +40,7 @@ class UsersSeeder extends Seeder
                 "password" => Hash::make("dada"),
                 "date_start_employment" => $faker->date(),
                 'current_counter_holidays' => $faker->numberBetween(15, 30),
-                "role_id" => 2,
+                "role_id" => $faker->numberBetween(2, 3),
                 'group_id' => $faker->numberBetween(1, 3),
                 'department_id' => $faker->numberBetween(1, 3)
             ];

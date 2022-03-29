@@ -22,11 +22,11 @@
             ></div>
             <div
               v-else-if="workday.stop"
-              class="pa-5 ma-1 rounded-circle d-inline-block yellow"
+              class="pa-5 ma-1 rounded-circle d-inline-block green"
             ></div>
             <div
               v-else-if="workday.start"
-              class="pa-5 ma-1 rounded-circle d-inline-block green"
+              class="pa-5 ma-1 rounded-circle d-inline-block yellow"
             ></div>
             <div
               v-else

@@ -22,7 +22,7 @@ class ApplicationsController extends Controller
     public function list(FiltrApplications $request)
     {
         if (Gate::allows('hasPermission', 'applicationsAdminManage')) {
-            $applications = $this->applicationsSerivce->listWithUser($request->month, $request->status, $request->userName);
+            $applications = $this->applicationsSerivce->listByUser($request->month, $request->status, $request->userName);
         } else {
             $applications = $this->applicationsSerivce->list($request->month, $request->status, $request->user()->id);
         }

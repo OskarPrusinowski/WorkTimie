@@ -24,7 +24,7 @@ class CreateLeave extends FormRequest
     public function rules()
     {
         return [
-            'leave.name' => 'required|string',
+            'leave.name' => 'string',
             'leave.end' => 'required|date',
             'leave.user_id' => 'required|integer',
         ];

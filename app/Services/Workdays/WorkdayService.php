@@ -32,32 +32,32 @@ class WorkdayService
     }
 
 
-    public function getWorkday($id)
+    public function get($id)
     {
         $workday = $this->workdayModel->with("workPeriods")->find($id);
         return $this->workdayModel->with("workPeriods")->find($id);
     }
 
-    public function updateWorkday($newWorkday, $workdayId)
+    public function update($newWorkday, $workdayId)
     {
-        $workday = $this->getWorkday($workdayId);
+        $workday = $this->get($workdayId);
         $workday->update($newWorkday);
     }
 
     public function stop($workday, $workdayId)
     {
-        $workday['stop'] = Carbon::now()->addHour();
-        $workPeriods = $this->getWorkday($workdayId)->workPeriods;
+        $workday['stop'] = Carbon::now()->addHours(2);
+        $workPeriods = $this->get($workdayId)->workPeriods;
         $break = 0;
         foreach ($workPeriods as $workPeriod) {
             $break += $workPeriod->minutes;
         }
         $workday['breaktime'] = $break;
         $workday['worktime'] = Carbon::create($workday['start'])->diffInMinutes($workday['stop']) - $break;
-        $this->updateWorkday($workday, $workdayId);
+        $this->update($workday, $workdayId);
     }
 
-    public function createWorkday($workday)
+    public function create($workday)
     {
         $workday['additional_hours'] = 0;
         $workday['overtime'] = 0;
@@ -69,7 +69,7 @@ class WorkdayService
     {
         $workday = $this->getByUser($userId);
         $workday->default_worktime = $defaultWorktime;
-        $workday->start = Carbon::now()->addHour();
+        $workday->start = Carbon::now()->addHours(2);
         $additionalHours = $this->additionalHoursService->listToday($workday['user_id']);
         $overtimes = $this->overtimesService->listToday($workday['user_id']);
         foreach ($additionalHours as $additionalHour) {

@@ -7,7 +7,7 @@
         </v-card-title>
 
         <v-card-text>
-          <v-col class="ma-0 pb-0 pt-0" md="10">
+          <v-col class="ma-0 pb-0 pt-3" md="10">
             <v-textarea
               outlined
               name="Komentarz"

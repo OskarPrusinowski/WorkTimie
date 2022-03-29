@@ -24,10 +24,10 @@ class UsersService
         return $this->userModel->with("group")->with("department")->userName($name)->get();
     }
 
-    public function listWithFiltr($start, $stop, $userName)
+    public function listWithFiltr($start, $stop, $name)
     {
-        $userName = $userName ? $userName : "";
-        $users = $this->userModel->with("workdays")->userName($userName)->whereHas('workdays', function (Builder $query) use ($start, $stop) {
+        $name = $name ? $name : "";
+        $users = $this->userModel->with("workdays")->userName($name)->whereHas('workdays', function (Builder $query) use ($start, $stop) {
             $query->between($start, $stop);
         })->get();
         return $users;

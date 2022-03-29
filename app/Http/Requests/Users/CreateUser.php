@@ -34,4 +34,11 @@ class CreateUser extends FormRequest
             'user.department_id' => 'required|integer',
         ];
     }
+
+    public function messages()
+    {
+        return [
+            'user.email.unique' => "Istnieje już pracownik o tym mailu."
+        ];
+    }
 }

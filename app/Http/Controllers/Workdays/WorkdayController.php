@@ -33,7 +33,7 @@ class WorkdayController extends Controller
 
     public function update(UpdateWorkDay $request, $workdayId)
     {
-        $this->workdayService->updateWorkday($request->get("workday"), $workdayId);
+        $this->workdayService->update($request->get("workday"), $workdayId);
     }
 
     public function getByUser($userId)

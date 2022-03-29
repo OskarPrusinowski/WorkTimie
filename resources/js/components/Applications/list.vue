@@ -39,7 +39,13 @@
           </td>
           <td class="text-left">{{ application.type }}</td>
           <td class="text-left">{{ application.date }}</td>
-          <td class="text-left" v-if="application.first_date">
+          <td
+            class="text-left"
+            v-if="
+              application.first_date &&
+              application.first_date != application.second_date
+            "
+          >
             {{ application.first_date }} - {{ application.second_date }}
           </td>
           <td class="text-left" v-else>{{ application.second_date }}</td>
@@ -151,15 +157,18 @@ export default {
       }
     },
     addTimeWorkday(application) {
-      store.commit("setWorkdaysUserId", this.user.id);
-      store.commit("setWorkdaysDate", application.changed_date);
-      if (application.type == "Nadgodziny") {
-        store.commit("setWorkdaysMinutes", application.minutes);
-      } else {
-        store.commit("setWorkdaysMinutes", -application.minutes);
+      if (moment().format("yyyy-MM-DD") == application.second_date) {
+        store.commit("setWorkdaysUserId", this.user.id);
+        store.commit("setWorkdaysDate", application.second_date);
+        if (application.type == "Nadgodziny") {
+          store.commit("setWorkdaysMinutes", application.minutes);
+        } else {
+          store.commit("setWorkdaysMinutes", -application.minutes);
+        }
+        store.commit("setWorkdaysType", application.type);
+
+        store.dispatch("addTimeWorkday", this);
       }
-      store.commit("setWorkdaysType", application.type);
-      store.dispatch("addTimeWorkday", this);
     },
     reject(id) {
       store.commit("setApplicationAccepted", 0);

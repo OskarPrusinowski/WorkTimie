@@ -37,7 +37,6 @@
                   v-model="dates"
                   no-title
                   scrollable
-                  :allowed-dates="allowedDates"
                   :min="minDate"
                   range
                 >
@@ -86,7 +85,7 @@ export default {
       minDate: moment().add(1, "days").format("YYYY-MM-DD"),
 
       dialog: false,
-      dates: "",
+      dates: null,
       rules: {
         required: (value) => !!value || "Wymagane.",
         max: (value) => value.length <= 20 || "Musi zawierać do 20 liter",
@@ -112,13 +111,8 @@ export default {
       if (this.$refs.form.validate()) {
         store.commit("setApplicationUserId", this.userId);
         store.commit("setApplicationType", "Urlop");
-        if (this.dates[0] == "") {
-          this.dates[0] = moment(this.dates[1])
-            .subtract(
-              parseInt(this.dates[1].substr(this.dates[1].length - 2)) - 1,
-              "days"
-            )
-            .format("YYYY-MM-DD");
+        if (this.dates.length == 1) {
+          this.dates.push(this.dates[0]);
         }
         if (this.dates[1] > this.dates[0]) {
           store.commit("setApplicationFirstDate", this.dates[0]);

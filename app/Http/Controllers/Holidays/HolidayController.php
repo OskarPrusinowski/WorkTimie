@@ -20,11 +20,11 @@ class HolidayController extends Controller
 
     public function create(CreateHoliday $request)
     {
-        $this->holidayService->createHoliday($request->get("holiday"));
+        $this->holidayService->create($request->get("holiday"));
     }
 
     public function destroy($id)
     {
-        $this->holidayService->deleteHoliday($id);
+        $this->holidayService->delete($id);
     }
 }

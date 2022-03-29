@@ -15,7 +15,7 @@ class RolesSeeder extends Seeder
      * @return void
      */
 
-    protected $roles = ['admin', 'employee'];
+    protected $roles = ['admin', 'employee', 'contractor'];
 
     public function run()
     {

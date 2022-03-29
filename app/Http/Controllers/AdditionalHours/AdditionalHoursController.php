@@ -16,7 +16,7 @@ class AdditionalHoursController extends Controller
         $this->middleware("permission:additionalHoursShow");
     }
 
-    public function listByUser($userId)
+    public function listToday($userId)
     {
         $additionalHour = $this->additionalHoursService->listToday($userId);
         return response()->json(['additionalHours' => $additionalHour]);

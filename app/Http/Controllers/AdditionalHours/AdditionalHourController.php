@@ -16,23 +16,23 @@ class AdditionalHourController extends Controller
     {
         $this->additionalHourService = $additionalHourService;
         $this->middleware("permission:additionalHoursShow");
-        $this->middleware("permission:additionalHoursMange");
+        $this->middleware("permission:additionalHoursManage");
     }
 
     public function create(CreateAdditionalHour $request)
     {
-        $this->additionalHourService->createAdditionalHour($request->get("additionalHour"));
+        $this->additionalHourService->create($request->get("additionalHour"));
     }
 
     public function show($id)
     {
-        $additionalHour = $this->additionalHourService->getAdditionalHour($id);
+        $additionalHour = $this->additionalHourService->get($id);
         return response()->json(['additionalHour' => $additionalHour]);
     }
 
     public function showByUser($userId)
     {
-        $additionalHour = $this->additionalHourService->getAdditionalHourByUser($userId);
+        $additionalHour = $this->additionalHourService->getByUser($userId);
         return response()->json(['additionalHour' => $additionalHour]);
     }
 }
